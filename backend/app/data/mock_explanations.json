@@ -1,0 +1,31 @@
+{
+  "default": {
+    "features": [
+      { "feature": "Contract type: Month-to-month", "contribution": 0.18 },
+      { "feature": "High monthly charges", "contribution": 0.13 },
+      { "feature": "Recent support tickets", "contribution": 0.1 },
+      { "feature": "Late payments", "contribution": 0.08 },
+      { "feature": "Short tenure", "contribution": 0.07 },
+      { "feature": "Automatic payment disabled", "contribution": 0.05 }
+    ],
+    "summary": [
+      "Flexible contract increases churn risk.",
+      "Higher recurring charges contribute to dissatisfaction.",
+      "Recent service friction is a notable warning signal."
+    ]
+  },
+  "CUST-1003": {
+    "features": [
+      { "feature": "Long tenure", "contribution": -0.19 },
+      { "feature": "Two year contract", "contribution": -0.17 },
+      { "feature": "No recent tickets", "contribution": -0.11 },
+      { "feature": "No late payments", "contribution": -0.09 },
+      { "feature": "Lower monthly charges", "contribution": -0.07 }
+    ],
+    "summary": [
+      "Long tenure lowers churn risk.",
+      "A two year contract is a stabilizing factor.",
+      "No recent support issues keeps risk low."
+    ]
+  }
+}

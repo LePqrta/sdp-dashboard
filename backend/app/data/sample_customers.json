@@ -1,0 +1,62 @@
+[
+  {
+    "customer_id": "CUST-1001",
+    "age": 28,
+    "tenure_months": 8,
+    "contract_type": "Month-to-month",
+    "monthly_charges": 89.4,
+    "total_charges": 715.2,
+    "internet_service": "Fiber optic",
+    "payment_method": "Electronic check",
+    "support_tickets": 4,
+    "late_payments": 2
+  },
+  {
+    "customer_id": "CUST-1002",
+    "age": 45,
+    "tenure_months": 39,
+    "contract_type": "One year",
+    "monthly_charges": 64.1,
+    "total_charges": 2499.9,
+    "internet_service": "DSL",
+    "payment_method": "Credit card",
+    "support_tickets": 1,
+    "late_payments": 0
+  },
+  {
+    "customer_id": "CUST-1003",
+    "age": 61,
+    "tenure_months": 71,
+    "contract_type": "Two year",
+    "monthly_charges": 44.5,
+    "total_charges": 3159.5,
+    "internet_service": "DSL",
+    "payment_method": "Bank transfer",
+    "support_tickets": 0,
+    "late_payments": 0
+  },
+  {
+    "customer_id": "CUST-1004",
+    "age": 34,
+    "tenure_months": 14,
+    "contract_type": "Month-to-month",
+    "monthly_charges": 102.7,
+    "total_charges": 1437.8,
+    "internet_service": "Fiber optic",
+    "payment_method": "Electronic check",
+    "support_tickets": 5,
+    "late_payments": 3
+  },
+  {
+    "customer_id": "CUST-1005",
+    "age": 52,
+    "tenure_months": 26,
+    "contract_type": "One year",
+    "monthly_charges": 72.8,
+    "total_charges": 1892.8,
+    "internet_service": "Fiber optic",
+    "payment_method": "Mailed check",
+    "support_tickets": 2,
+    "late_payments": 1
+  }
+]

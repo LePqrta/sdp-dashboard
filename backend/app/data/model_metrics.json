@@ -1,0 +1,38 @@
+[
+  {
+    "model_name": "TFT",
+    "accuracy": 0.884,
+    "precision": 0.812,
+    "recall": 0.846,
+    "f1_score": 0.829,
+    "roc_auc": 0.921,
+    "pr_auc": 0.874,
+    "model_size_mb": 118.4,
+    "average_inference_ms": 42.6,
+    "threshold": 0.52
+  },
+  {
+    "model_name": "NHiTS",
+    "accuracy": 0.871,
+    "precision": 0.798,
+    "recall": 0.821,
+    "f1_score": 0.809,
+    "roc_auc": 0.903,
+    "pr_auc": 0.852,
+    "model_size_mb": 76.2,
+    "average_inference_ms": 31.4,
+    "threshold": 0.5
+  },
+  {
+    "model_name": "TabNet",
+    "accuracy": 0.862,
+    "precision": 0.784,
+    "recall": 0.805,
+    "f1_score": 0.794,
+    "roc_auc": 0.891,
+    "pr_auc": 0.836,
+    "model_size_mb": 38.7,
+    "average_inference_ms": 18.9,
+    "threshold": 0.48
+  }
+]
