@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import pickle
 import sys
 import time
 import zipfile
@@ -12,6 +11,9 @@ from typing import Any
 
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
 ARTIFACTS_DIR = BACKEND_DIR / "app" / "artifacts"
 SAMPLE_PATH = ARTIFACTS_DIR / "datasets" / "sample" / "customers_sample.parquet"
 
@@ -202,16 +204,8 @@ def validate_tabnet_fallback(customer_ids: list[str]) -> CheckResult:
 def validate_tft_live(sample_df: Any, customer_ids: list[str]) -> CheckResult:
     started = time.perf_counter()
     try:
-        torch = _import("torch")
-        forecasting = _import("pytorch_forecasting")
-        _import("pytorch_lightning")
-
         summary = _load_json(TFT_SUMMARY_PATH)
         model_config = summary.get("model_config", {})
-        checkpoint = torch.load(TFT_CHECKPOINT_PATH, map_location="cpu", weights_only=False)
-        checkpoint_dataset_parameters = checkpoint.get("dataset_parameters")
-        checkpoint_hyperparameters = checkpoint.get("hyper_parameters", {})
-
         required_dataset_fields = [
             "max_encoder_length",
             "max_prediction_length",
@@ -229,44 +223,24 @@ def validate_tft_live(sample_df: Any, customer_ids: list[str]) -> CheckResult:
                 raise ValueError(f"No TFT panel rows for {customer_id}")
             customer_panel_lengths[customer_id] = int(len(customer_df))
 
-        with TFT_CALIBRATOR_PATH.open("rb") as file:
-            calibrator = pickle.load(file)
+        from app.services.artifact_prediction_service import predict_tft
 
-        try:
-            model = forecasting.TemporalFusionTransformer.load_from_checkpoint(
-                str(TFT_CHECKPOINT_PATH),
-                map_location="cpu",
-            )
-        except AssertionError as exc:
-            if "Torch not compiled with CUDA enabled" in str(exc):
-                return _result(
-                    "tft_live_inference",
-                    "blocked",
-                    elapsed_ms=round((time.perf_counter() - started) * 1000, 2),
-                    reason=(
-                        "TFT checkpoint metadata loads, but model construction tries to move a saved "
-                        "metric/module to CUDA while this environment has CPU-only Torch."
-                    ),
-                    torch_cuda_available=bool(torch.cuda.is_available()),
-                    checkpoint_has_dataset_parameters=checkpoint_dataset_parameters is not None,
-                    checkpoint_hyperparameter_keys=list(checkpoint_hyperparameters.keys())[:30],
-                    model_config={key: model_config.get(key) for key in required_dataset_fields},
-                    calibrator_type=type(calibrator).__name__,
-                    customer_panel_lengths=customer_panel_lengths,
-                )
-            raise
+        predictions = {}
+        sources = {}
+        for customer_id in customer_ids:
+            result = predict_tft(customer_id)
+            if result.source != "live_model":
+                raise ValueError(f"TFT live inference fell back for {customer_id}: {result.message}")
+            predictions[customer_id] = result.churn_probability
+            sources[customer_id] = result.source
 
-        # If checkpoint loading succeeds, true prediction still requires reconstructing
-        # the exact TimeSeriesDataSet and dataloader used by PyTorch Forecasting.
         return _result(
             "tft_live_inference",
-            "blocked",
+            "passed",
             elapsed_ms=round((time.perf_counter() - started) * 1000, 2),
-            reason="TFT checkpoint loads, but true prediction needs exact TimeSeriesDataSet reconstruction before inference batches can be created.",
-            loaded_model_type=type(model).__name__,
-            checkpoint_has_dataset_parameters=checkpoint_dataset_parameters is not None,
+            predictions=predictions,
+            sources=sources,
             model_config={key: model_config.get(key) for key in required_dataset_fields},
-            calibrator_type=type(calibrator).__name__,
             customer_panel_lengths=customer_panel_lengths,
         )
     except BaseException as exc:

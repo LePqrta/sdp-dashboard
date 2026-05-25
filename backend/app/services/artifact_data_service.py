@@ -28,6 +28,14 @@ TABNET_FALLBACK_PATH = (
     ARTIFACTS_DIR / "models" / "tabnet" / "predictions" / "tabnet_l3_latest_test_predictions.parquet"
 )
 TFT_FALLBACK_PATH = ARTIFACTS_DIR / "models" / "tft" / "predictions" / "latest_test_predictions.parquet"
+TFT_CHECKPOINT_PATH = (
+    ARTIFACTS_DIR
+    / "models"
+    / "tft"
+    / "checkpoints"
+    / "tft-l3-gold-v1-epoch=04-val_loss=0.6388.ckpt"
+)
+TFT_CALIBRATOR_PATH = ARTIFACTS_DIR / "models" / "tft" / "calibration" / "isotonic_calibrator.pkl"
 DEMO_CUSTOMER_LIMIT = 5000
 
 
