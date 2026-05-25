@@ -1,0 +1,16 @@
+{
+  "model": "TabNet",
+  "label": "L3 GOLD v3",
+  "view": "primary_anchor_sep2024",
+  "feature_set": "balanced_no_expected_future_factors",
+  "best_trial": "trial_05_low_gamma",
+  "val_auc": 0.6977569027681231,
+  "val_f1_05": 0.6998569384835479,
+  "val_best_f1_threshold": 0.41179901361465454,
+  "val_f1_best": 0.7210235825388861,
+  "test_auc": 0.688908058772271,
+  "test_f1_05": 0.6956439751084292,
+  "test_f1_at_val_best_threshold": 0.7205134616987581,
+  "test_precision_at_val_best_threshold": 0.6003611612723989,
+  "test_recall_at_val_best_threshold": 0.9007919966652772
+}

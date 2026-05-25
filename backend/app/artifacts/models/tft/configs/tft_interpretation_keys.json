@@ -1,0 +1,10 @@
+{
+  "keys": [
+    "attention",
+    "static_variables",
+    "encoder_variables",
+    "decoder_variables",
+    "encoder_length_histogram",
+    "decoder_length_histogram"
+  ]
+}

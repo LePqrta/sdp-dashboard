@@ -23,3 +23,5 @@ uvicorn app.main:app --reload --port 8000
 ## Real Model Integration
 
 Add model loading and inference in `app/services/prediction_service.py`. Keep large datasets out of the API runtime path; use a curated sample dataset for demos and lightweight customer lookup.
+
+Place real TabNet and TFT artifacts under `app/artifacts/`. See `app/artifacts/README.md` for the folder map.

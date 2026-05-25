@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv311/
 
 # Node / Next.js
 node_modules/
@@ -11,6 +12,15 @@ out/
 # Environment
 .env
 .env.local
+
+# Local model artifacts and sample datasets
+backend/app/artifacts/**/*.ckpt
+backend/app/artifacts/**/*.pkl
+backend/app/artifacts/**/*.parquet
+backend/app/artifacts/**/*.zip
+backend/app/artifacts/**/*.pt
+backend/app/artifacts/**/*.pth
+backend/app/artifacts/**/*.onnx
 
 # Editor / OS
 .DS_Store
