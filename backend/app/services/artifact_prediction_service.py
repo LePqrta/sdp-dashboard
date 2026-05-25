@@ -71,15 +71,6 @@ def predict_tft(customer_id: str) -> PredictionResult:
         )
 
 
-def predict_nhits_mock(raw_result: dict[str, Any]) -> PredictionResult:
-    return PredictionResult(
-        **raw_result,
-        source="mock_baseline",
-        status="mock",
-        message="NHiTS is retained as a mock baseline because it is not part of the live model integration.",
-    )
-
-
 @lru_cache
 def _load_tabnet_model() -> Any:
     try:

@@ -11,7 +11,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           <div className="p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">ML Analytics</p>
             <h1 className="mt-2 text-xl font-semibold leading-6 text-ink">Churn Model Comparison</h1>
-            <p className="mt-3 text-xs leading-5 text-muted">A model evaluation studio for TFT, NHiTS, and TabNet.</p>
+            <p className="mt-3 text-xs leading-5 text-muted">A model evaluation studio for TFT and TabNet.</p>
           </div>
         </Link>
 

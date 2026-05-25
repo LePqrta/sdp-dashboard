@@ -1,19 +1,15 @@
 from app.schemas.prediction import PredictionResponse, PredictionResult
-from app.services.artifact_prediction_service import predict_nhits_mock, predict_tabnet, predict_tft
-from app.services.mock_data_service import find_customer, load_mock_predictions
+from app.services.artifact_prediction_service import predict_tabnet, predict_tft
+from app.services.mock_data_service import find_customer
 from app.services.model_selection_service import select_best_for_customer
 
 
 def predict_for_customer(customer_id: str) -> PredictionResponse:
     customer = find_customer(customer_id)
-    prediction_map = load_mock_predictions()
 
-    raw_results = prediction_map.get(customer_id, prediction_map["default"])
-    mock_by_model = {item["model_name"]: item for item in raw_results}
     results = [
         _safe_model_result("TabNet", lambda: predict_tabnet(customer.customer_id)),
         _safe_model_result("TFT", lambda: predict_tft(customer.customer_id)),
-        predict_nhits_mock(mock_by_model.get("NHiTS", prediction_map["default"][1])),
     ]
     best_model = select_best_for_customer(results)
 

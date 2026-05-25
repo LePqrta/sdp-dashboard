@@ -1,6 +1,6 @@
 # Churn Prediction Model Comparison Dashboard
 
-Full-stack MVP for comparing churn prediction models for a graduation project. The app uses mock data now and is structured so real TFT, NHiTS, and TabNet inference can be plugged in later.
+Full-stack MVP for comparing TFT and TabNet churn prediction models for a graduation project.
 
 ## Stack
 
@@ -45,7 +45,7 @@ This avoids slow Next.js development-mode route compilation during the demo.
 ## Dashboard Routes
 
 - `/` - landing page and project workflow
-- `/models` - global TFT, NHiTS, and TabNet metric comparison
+- `/models` - global TFT and TabNet metric comparison
 - `/customers` - random customer selection from the demo sample
 - `/predictions/[customer_id]` - customer-level prediction comparison
 - `/explainability/[customer_id]` - placeholder model explainability views
@@ -85,6 +85,5 @@ The frontend reads the API base URL from `NEXT_PUBLIC_API_BASE_URL`. By default 
 ## Notes
 
 - The dashboard assumes a demo sample of roughly 1000-5000 customers, not the full 14 GB dataset.
-- Current predictions, metrics, customer data, and explainability values are mocked.
-- Real model loading and inference should be added inside `backend/app/services/prediction_service.py`.
+- TFT and TabNet predictions use local model artifacts when available, with validated fallbacks for demo safety.
 - For presentations, prefer `npm.cmd run prepare-demo` followed by `npm.cmd run demo` from the project root.

@@ -5,7 +5,7 @@ from app.api import customers, explanations, metrics, predictions
 
 app = FastAPI(
     title="Churn Prediction Model Comparison API",
-    description="Mock API for comparing TFT, NHiTS, and TabNet churn prediction models.",
+    description="API for comparing TFT and TabNet churn prediction models.",
     version="0.1.0",
 )
 

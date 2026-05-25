@@ -13,10 +13,10 @@ uvicorn app.main:app --reload --port 8000
 
 ## Endpoints
 
-- `GET /metrics` - static metrics for TFT, NHiTS, and TabNet
+- `GET /metrics` - static metrics for TFT and TabNet
 - `GET /customers` - sample demo customers
 - `GET /customers/random` - one random sample customer
-- `POST /predict` - mock predictions from all three models for a customer
+- `POST /predict` - live TFT and TabNet predictions for a customer
 - `GET /explanations/{customer_id}` - mock SHAP-style feature contributions
 - `GET /best-model` - best global model using weighted scoring
 

@@ -7,11 +7,11 @@ import { ShimmerText } from "@/components/ShimmerText";
 const features = [
   {
     title: "Global model comparison",
-    body: "Review validation metrics for TFT, NHiTS, and TabNet with balanced accuracy, recall, F1, ROC-AUC, size, and speed views.",
+    body: "Review validation metrics for TFT and TabNet with balanced accuracy, recall, F1, ROC-AUC, size, and speed views.",
   },
   {
     title: "Customer-level prediction",
-    body: "Select one representative demo customer and run the same prediction request through all three model interfaces.",
+    body: "Select one representative demo customer and run the same prediction request through both model interfaces.",
   },
   {
     title: "Explainability placeholders",
@@ -37,7 +37,7 @@ export default function LandingPage() {
                 Model Comparison Dashboard
               </h1>
               <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-                This dashboard compares TFT, NHiTS, and TabNet models for customer churn prediction
+                This dashboard compares TFT and TabNet models for customer churn prediction
                 using a representative customer sample dataset.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -58,7 +58,7 @@ export default function LandingPage() {
             <div className="rounded-2xl border border-slate-200 bg-[#1c2430] p-5 text-white shadow-[0_24px_60px_rgba(28,36,48,0.22)]">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">Evaluation slate</p>
               <div className="grid gap-4">
-                {["TFT", "NHiTS", "TabNet"].map((model, index) => (
+                {["TFT", "TabNet"].map((model, index) => (
                   <div
                     key={model}
                     className="rounded-xl border border-white/10 bg-white/8 p-4 shadow-sm backdrop-blur"

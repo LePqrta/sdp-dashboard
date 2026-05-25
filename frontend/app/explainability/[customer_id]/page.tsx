@@ -20,9 +20,9 @@ export default function ExplainabilityPage({ params }: ExplainabilityPageProps) 
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([api.getCustomers(), api.getExplanations(customerId)])
-      .then(([customers, explanationData]) => {
-        setCustomer(customers.find((item) => item.customer_id === customerId) ?? null);
+    Promise.all([api.getCustomer(customerId), api.getExplanations(customerId)])
+      .then(([customerData, explanationData]) => {
+        setCustomer(customerData);
         setExplanation(explanationData);
       })
       .catch(() => setError("Could not load explainability data for this customer."));
@@ -33,7 +33,6 @@ export default function ExplainabilityPage({ params }: ExplainabilityPageProps) 
     return {
       tft: explanation.features,
       tabnet: scaleFeatures(explanation.features, 0.86),
-      nhits: scaleFeatures(explanation.features, 0.52),
     };
   }, [explanation]);
 
@@ -92,17 +91,6 @@ export default function ExplainabilityPage({ params }: ExplainabilityPageProps) 
             ]}
           />
 
-          <ModelExplanationCard
-            modelName="NHiTS"
-            badge="Post-hoc placeholder"
-            description="NHiTS explainability is represented as a placeholder for now. Deeper post-hoc explainability may be added later with perturbation, SHAP, or feature attribution methods."
-            features={modelFeatures.nhits}
-            summary={[
-              "Keeps the explanation page complete for all three models.",
-              "Documents the planned post-hoc interpretation path.",
-              "Can later connect to model-specific time-series attribution outputs.",
-            ]}
-          />
         </div>
       ) : null}
     </div>

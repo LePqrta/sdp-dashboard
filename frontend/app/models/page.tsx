@@ -39,7 +39,7 @@ export default function ModelsPage() {
       <PageHeader
         eyebrow="Global evaluation"
         title="Model Comparison"
-        description="A dedicated analytics view for static validation performance, operational size, and inference latency across TFT, NHiTS, and TabNet."
+        description="A dedicated analytics view for static validation performance, operational size, and inference latency across TFT and TabNet."
         actions={
           <Link
             href="/customers"
@@ -54,8 +54,8 @@ export default function ModelsPage() {
       {!metrics.length && !error ? (
         <div>
           <LoadingState label="Loading model comparison data..." />
-          <div className="mt-6 grid gap-4 lg:grid-cols-3">
-            {[0, 1, 2].map((item) => (
+          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            {[0, 1].map((item) => (
               <div key={item} className="research-card rounded-2xl p-5">
                 <div className="h-4 w-24 animate-pulse rounded bg-vellum" />
                 <div className="mt-4 h-8 w-20 animate-pulse rounded bg-vellum" />
@@ -73,7 +73,7 @@ export default function ModelsPage() {
 
       {metrics.length ? (
         <div className="space-y-6">
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-2">
             {metrics.map((item) => (
               <div key={item.model_name} className="fade-in">
                 <MetricCard metrics={item} isBest={item.model_name === bestModel?.model_name} />
