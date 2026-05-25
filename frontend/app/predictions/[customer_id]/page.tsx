@@ -43,7 +43,7 @@ export default function PredictionPage({ params }: PredictionPageProps) {
       <PageHeader
         eyebrow="Customer prediction"
         title={`Prediction Results: ${customerId}`}
-        description="Compare live, cached, and baseline churn outputs for the selected customer sample."
+        description="Compare live TFT and TabNet churn outputs for the selected customer sample."
         actions={
           <>
             <Link href={`/explainability/${customerId}`} className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-[#256864]">
@@ -65,7 +65,7 @@ export default function PredictionPage({ params }: PredictionPageProps) {
           <LoadingState label="Running model predictions..." />
           <SlowLoadingNotice
             delayMs={2200}
-            message="Real models may take a little time here. Keep this page open while the ensemble finishes."
+            message="TFT and TabNet may take a little time on first load. Keep this page open while inference finishes."
           />
         </div>
       ) : null}
@@ -74,7 +74,7 @@ export default function PredictionPage({ params }: PredictionPageProps) {
         <div className="space-y-6">
           {customer ? <CustomerCard customer={customer} /> : null}
 
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-2">
             {prediction.predictions.map((item) => (
               <div key={item.model_name} className="fade-in">
                 <PredictionCard prediction={item} highlight={item.model_name === prediction.highest_probability_model} />
@@ -84,7 +84,7 @@ export default function PredictionPage({ params }: PredictionPageProps) {
 
           <section className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
-                <AnimatedChartCard title="Churn Probability Comparison" description="Customer-level probability output with source labels for live, cached, and baseline results.">
+                <AnimatedChartCard title="Churn Probability Comparison" description="Customer-level probability output from TFT and TabNet with source labels.">
                 <ProbabilityChart predictions={prediction.predictions} />
               </AnimatedChartCard>
             </div>
