@@ -7,21 +7,39 @@ import { LoadingState } from "@/components/LoadingState";
 import { PageHeader } from "@/components/PageHeader";
 import { api, Customer } from "@/lib/api";
 
+const PAGE_SIZE = 25;
+
 export default function CustomersPage() {
   const router = useRouter();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [loadingCustomer, setLoadingCustomer] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCustomers, setTotalCustomers] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
+  const totalPages = Math.max(1, Math.ceil(totalCustomers / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const pageStart = (safePage - 1) * PAGE_SIZE;
+
   useEffect(() => {
+    setLoadingList(true);
     api
-      .getCustomers()
-      .then(setCustomers)
+      .getCustomerPage(safePage, PAGE_SIZE)
+      .then((page) => {
+        setCustomers(page.items);
+        setTotalCustomers(page.total);
+      })
       .catch(() => setError("Could not load sample customers."))
       .finally(() => setLoadingList(false));
-  }, []);
+  }, [safePage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   async function selectRandomCustomer() {
     setLoadingCustomer(true);
@@ -111,7 +129,33 @@ export default function CustomersPage() {
       </div>
 
       <section className="research-card mt-6 rounded-2xl p-5">
-        <h2 className="text-xl font-semibold text-ink">Sample Customer List</h2>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-ink">Sample Customer List</h2>
+            <p className="mt-1 text-sm text-muted">
+              Showing {totalCustomers ? pageStart + 1 : 0}-{Math.min(pageStart + PAGE_SIZE, totalCustomers)} of {totalCustomers} customers
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              disabled={safePage === 1 || loadingList}
+              className="rounded-md border border-line bg-panel px-3 py-2 text-sm font-semibold text-ink hover:bg-mint/10 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="min-w-24 text-center text-sm font-semibold text-muted">
+              Page {safePage} / {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+              disabled={safePage === totalPages || loadingList}
+              className="rounded-md border border-line bg-panel px-3 py-2 text-sm font-semibold text-ink hover:bg-mint/10 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </div>
         {loadingList ? (
           <div className="mt-4"><LoadingState label="Loading sample customers..." /></div>
         ) : (
@@ -128,13 +172,20 @@ export default function CustomersPage() {
               </thead>
               <tbody>
                 {customers.map((customer) => (
-                  <tr key={customer.customer_id} className="border-b border-line last:border-0 hover:bg-slate-50">
+                  <tr
+                    key={customer.customer_id}
+                    onClick={() => setSelectedCustomer(customer)}
+                    className={[
+                      "cursor-pointer border-b border-line last:border-0 hover:bg-slate-50",
+                      selectedCustomer?.customer_id === customer.customer_id ? "bg-blue-50" : "",
+                    ].join(" ")}
+                  >
                     <td className="py-3 pr-4 font-semibold text-ink">{customer.customer_id}</td>
                     <td className="py-3 pr-4">{customer.history_months_available ?? customer.age} months</td>
                     <td className="py-3 pr-4">{customer.tenure_months} months</td>
                     <td className="py-3 pr-4">{customer.customer_segment ?? customer.contract_type}</td>
                     <td className="py-3 pr-4">
-                      {(customer.txn_count_3m ?? customer.support_tickets).toFixed(0)} txns · ${(customer.spend_3m ?? customer.monthly_charges).toFixed(2)}
+                      {(customer.txn_count_3m ?? customer.support_tickets).toFixed(0)} txns / ${(customer.spend_3m ?? customer.monthly_charges).toFixed(2)}
                     </td>
                   </tr>
                 ))}

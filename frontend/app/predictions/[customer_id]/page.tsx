@@ -25,9 +25,9 @@ export default function PredictionPage({ params }: PredictionPageProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([api.getCustomers(), api.predict(customerId), api.getBestModel()])
-      .then(([customers, predictionData, bestModelData]) => {
-        setCustomer(customers.find((item) => item.customer_id === customerId) ?? null);
+    Promise.all([api.getCustomer(customerId), api.predict(customerId), api.getBestModel()])
+      .then(([customerData, predictionData, bestModelData]) => {
+        setCustomer(customerData);
         setPrediction(predictionData);
         setBestModel(bestModelData);
       })

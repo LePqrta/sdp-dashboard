@@ -6,7 +6,7 @@ from typing import Any
 
 from fastapi import HTTPException
 
-from app.schemas.customer import Customer
+from app.schemas.customer import Customer, CustomerPage
 from app.schemas.metrics import ModelMetrics
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
@@ -33,6 +33,24 @@ def load_customers() -> list[Customer]:
         # are not installed yet.
         pass
     return [Customer(**item) for item in _read_json("sample_customers.json")]
+
+
+def load_customer_page(offset: int = 0, limit: int = 25) -> CustomerPage:
+    safe_offset = max(0, offset)
+    safe_limit = min(max(1, limit), 100)
+    try:
+        from app.services.artifact_data_service import load_artifact_customer_page
+
+        items, total = load_artifact_customer_page(safe_offset, safe_limit)
+        return CustomerPage(items=items, total=total, limit=safe_limit, offset=safe_offset)
+    except Exception:
+        customers = load_customers()
+        return CustomerPage(
+            items=customers[safe_offset : safe_offset + safe_limit],
+            total=len(customers),
+            limit=safe_limit,
+            offset=safe_offset,
+        )
 
 
 @lru_cache

@@ -22,3 +22,10 @@ class Customer(BaseModel):
     total_transaction_count: float | None = None
     total_lifetime_spend: float | None = None
     days_since_last_txn: float | None = None
+
+
+class CustomerPage(BaseModel):
+    items: list[Customer]
+    total: int
+    limit: int
+    offset: int

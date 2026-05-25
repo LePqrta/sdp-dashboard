@@ -47,6 +47,13 @@ export type PredictionResult = {
   message?: string | null;
 };
 
+export type CustomerPage = {
+  items: Customer[];
+  total: number;
+  limit: number;
+  offset: number;
+};
+
 export type PredictionResponse = {
   customer_id: string;
   predictions: PredictionResult[];
@@ -91,6 +98,9 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export const api = {
   getMetrics: () => request<ModelMetrics[]>("/metrics"),
   getCustomers: () => request<Customer[]>("/customers"),
+  getCustomerPage: (page: number, limit: number) =>
+    request<CustomerPage>(`/customers/page?offset=${(page - 1) * limit}&limit=${limit}`),
+  getCustomer: (customerId: string) => request<Customer>(`/customers/${customerId}`),
   getRandomCustomer: () => request<Customer>("/customers/random"),
   getBestModel: () => request<BestModel>("/best-model"),
   getExplanations: (customerId: string) =>

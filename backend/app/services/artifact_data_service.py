@@ -103,6 +103,13 @@ def load_artifact_customers() -> list[Customer]:
     return [_row_to_customer(row) for _, row in latest_rows.iterrows()]
 
 
+def load_artifact_customer_page(offset: int, limit: int) -> tuple[list[Customer], int]:
+    latest_rows = load_demo_customer_rows()
+    total = int(len(latest_rows))
+    page_rows = latest_rows.iloc[offset : offset + limit]
+    return [_row_to_customer(row) for _, row in page_rows.iterrows()], total
+
+
 def random_artifact_customer() -> Customer:
     latest_rows = load_demo_customer_rows()
     if latest_rows.empty:
