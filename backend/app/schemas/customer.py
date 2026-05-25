@@ -12,3 +12,13 @@ class Customer(BaseModel):
     payment_method: str
     support_tickets: int
     late_payments: int
+    split: str | None = None
+    latest_time_idx: int | None = None
+    customer_segment: str | None = None
+    history_months_available: int | None = None
+    txn_count_3m: float | None = None
+    spend_3m: float | None = None
+    avg_txn_amt_3m: float | None = None
+    total_transaction_count: float | None = None
+    total_lifetime_spend: float | None = None
+    days_since_last_txn: float | None = None

@@ -120,9 +120,9 @@ export default function CustomersPage() {
               <thead className="text-muted">
                 <tr className="border-b border-line">
                   <th className="py-3 pr-4 font-semibold">Customer</th>
-                  <th className="py-3 pr-4 font-semibold">Age</th>
+                  <th className="py-3 pr-4 font-semibold">History</th>
                   <th className="py-3 pr-4 font-semibold">Tenure</th>
-                  <th className="py-3 pr-4 font-semibold">Contract</th>
+                  <th className="py-3 pr-4 font-semibold">Segment</th>
                   <th className="py-3 pr-4 font-semibold">Activity</th>
                 </tr>
               </thead>
@@ -130,11 +130,11 @@ export default function CustomersPage() {
                 {customers.map((customer) => (
                   <tr key={customer.customer_id} className="border-b border-line last:border-0 hover:bg-slate-50">
                     <td className="py-3 pr-4 font-semibold text-ink">{customer.customer_id}</td>
-                    <td className="py-3 pr-4">{customer.age}</td>
+                    <td className="py-3 pr-4">{customer.history_months_available ?? customer.age} months</td>
                     <td className="py-3 pr-4">{customer.tenure_months} months</td>
-                    <td className="py-3 pr-4">{customer.contract_type}</td>
+                    <td className="py-3 pr-4">{customer.customer_segment ?? customer.contract_type}</td>
                     <td className="py-3 pr-4">
-                      {customer.support_tickets} tickets · {customer.late_payments} late payments
+                      {(customer.txn_count_3m ?? customer.support_tickets).toFixed(0)} txns · ${(customer.spend_3m ?? customer.monthly_charges).toFixed(2)}
                     </td>
                   </tr>
                 ))}

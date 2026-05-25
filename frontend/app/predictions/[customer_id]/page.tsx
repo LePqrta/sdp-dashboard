@@ -43,7 +43,7 @@ export default function PredictionPage({ params }: PredictionPageProps) {
       <PageHeader
         eyebrow="Customer prediction"
         title={`Prediction Results: ${customerId}`}
-        description="Compare churn probability, class label, confidence, and inference time across the three candidate models."
+        description="Compare live, cached, and baseline churn outputs for the selected customer sample."
         actions={
           <>
             <Link href={`/explainability/${customerId}`} className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-[#256864]">
@@ -84,7 +84,7 @@ export default function PredictionPage({ params }: PredictionPageProps) {
 
           <section className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <AnimatedChartCard title="Churn Probability Comparison" description="Customer-level probability output from each mock model.">
+                <AnimatedChartCard title="Churn Probability Comparison" description="Customer-level probability output with source labels for live, cached, and baseline results.">
                 <ProbabilityChart predictions={prediction.predictions} />
               </AnimatedChartCard>
             </div>

@@ -11,6 +11,9 @@ class PredictionResult(BaseModel):
     prediction_label: str
     confidence: float
     inference_ms: float
+    source: str | None = None
+    status: str | None = None
+    message: str | None = None
 
 
 class PredictionResponse(BaseModel):

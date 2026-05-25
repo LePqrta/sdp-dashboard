@@ -1,4 +1,5 @@
 import type { PredictionResult } from "@/lib/api";
+import { PredictionSourceBadge } from "@/components/PredictionSourceBadge";
 
 export function ProbabilityChart({ predictions }: { predictions: PredictionResult[] }) {
   return (
@@ -12,7 +13,10 @@ export function ProbabilityChart({ predictions }: { predictions: PredictionResul
                 <p className="text-sm font-semibold text-ink">{item.model_name}</p>
                 <p className="text-xs text-muted">{item.prediction_label}</p>
               </div>
-              <p className="text-xl font-semibold text-ink">{probability.toFixed(1)}%</p>
+              <div className="flex flex-col items-end gap-2">
+                <PredictionSourceBadge prediction={item} />
+                <p className="text-xl font-semibold text-ink">{probability.toFixed(1)}%</p>
+              </div>
             </div>
             <div className="h-3 rounded-full bg-vellum">
               <div

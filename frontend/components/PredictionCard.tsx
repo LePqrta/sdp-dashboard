@@ -1,4 +1,5 @@
 import type { PredictionResult } from "@/lib/api";
+import { PredictionSourceBadge } from "@/components/PredictionSourceBadge";
 
 export function PredictionCard({
   prediction,
@@ -19,11 +20,14 @@ export function PredictionCard({
           <p className="text-sm font-semibold text-muted">Model</p>
           <h3 className="mt-1 text-2xl font-semibold text-ink">{prediction.model_name}</h3>
         </div>
-        {highlight ? (
-          <span className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white">
-            Highest risk
-          </span>
-        ) : null}
+        <div className="flex flex-col items-end gap-2">
+          <PredictionSourceBadge prediction={prediction} />
+          {highlight ? (
+            <span className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white">
+              Highest risk
+            </span>
+          ) : null}
+        </div>
       </div>
       <div className="mt-5">
         <p className="text-sm text-muted">Churn probability</p>
@@ -42,6 +46,7 @@ export function PredictionCard({
         <Info label="Confidence" value={`${(prediction.confidence * 100).toFixed(1)}%`} />
         <Info label="Inference" value={`${prediction.inference_ms.toFixed(1)} ms`} />
       </div>
+      {prediction.message ? <p className="mt-4 text-xs leading-5 text-muted">{prediction.message}</p> : null}
     </article>
   );
 }

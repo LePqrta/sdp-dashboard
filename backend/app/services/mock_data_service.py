@@ -24,6 +24,14 @@ def load_model_metrics() -> list[ModelMetrics]:
 
 @lru_cache
 def load_customers() -> list[Customer]:
+    try:
+        from app.services.artifact_data_service import load_artifact_customers
+
+        return load_artifact_customers()
+    except Exception:
+        # Fallback keeps the MVP usable when local model artifacts or parquet dependencies
+        # are not installed yet.
+        pass
     return [Customer(**item) for item in _read_json("sample_customers.json")]
 
 
@@ -38,13 +46,27 @@ def load_mock_explanations() -> dict[str, dict[str, Any]]:
 
 
 def random_customer() -> Customer:
-    customers = load_customers()
-    if not customers:
-        raise HTTPException(status_code=404, detail="No customers available")
-    return random.choice(customers)
+    try:
+        from app.services.artifact_data_service import random_artifact_customer
+
+        return random_artifact_customer()
+    except Exception:
+        customers = load_customers()
+        if not customers:
+            raise HTTPException(status_code=404, detail="No customers available")
+        return random.choice(customers)
 
 
 def find_customer(customer_id: str) -> Customer:
+    try:
+        from app.services.artifact_data_service import find_artifact_customer
+
+        return find_artifact_customer(customer_id)
+    except HTTPException:
+        pass
+    except Exception:
+        pass
+
     for customer in load_customers():
         if customer.customer_id == customer_id:
             return customer

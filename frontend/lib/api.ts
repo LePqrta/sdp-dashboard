@@ -24,6 +24,16 @@ export type Customer = {
   payment_method: string;
   support_tickets: number;
   late_payments: number;
+  split?: string | null;
+  latest_time_idx?: number | null;
+  customer_segment?: string | null;
+  history_months_available?: number | null;
+  txn_count_3m?: number | null;
+  spend_3m?: number | null;
+  avg_txn_amt_3m?: number | null;
+  total_transaction_count?: number | null;
+  total_lifetime_spend?: number | null;
+  days_since_last_txn?: number | null;
 };
 
 export type PredictionResult = {
@@ -32,6 +42,9 @@ export type PredictionResult = {
   prediction_label: "Churn" | "Not Churn";
   confidence: number;
   inference_ms: number;
+  source?: "live_model" | "cached_fallback" | "mock_baseline" | "unavailable" | string | null;
+  status?: "ok" | "fallback" | "mock" | "failed" | string | null;
+  message?: string | null;
 };
 
 export type PredictionResponse = {

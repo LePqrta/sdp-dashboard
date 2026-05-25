@@ -4,15 +4,16 @@ export function CustomerCard({ customer }: { customer: Customer }) {
   const segment = getSegment(customer);
   const rows = [
     ["Customer ID", customer.customer_id],
-    ["Age", customer.age],
+    ["History", `${customer.history_months_available ?? customer.age} months`],
     ["Tenure", `${customer.tenure_months} months`],
-    ["Contract", customer.contract_type],
-    ["Internet", customer.internet_service],
-    ["Payment", customer.payment_method],
-    ["Monthly Charges", `$${customer.monthly_charges.toFixed(2)}`],
-    ["Total Charges", `$${customer.total_charges.toFixed(2)}`],
-    ["Support Tickets", customer.support_tickets],
-    ["Late Payments", customer.late_payments],
+    ["Sample Split", customer.split ?? customer.internet_service],
+    ["Latest Time Index", customer.latest_time_idx ?? "N/A"],
+    ["3M Transactions", formatNumber(customer.txn_count_3m ?? customer.support_tickets)],
+    ["3M Spend", formatMoney(customer.spend_3m ?? customer.monthly_charges)],
+    ["Avg Transaction", formatMoney(customer.avg_txn_amt_3m ?? customer.monthly_charges)],
+    ["Lifetime Spend", formatMoney(customer.total_lifetime_spend ?? customer.total_charges)],
+    ["Lifetime Transactions", formatNumber(customer.total_transaction_count ?? customer.support_tickets)],
+    ["Days Since Last Txn", formatNumber(customer.days_since_last_txn ?? customer.late_payments)],
     ["Customer Segment", segment],
   ];
 
@@ -43,6 +44,9 @@ export function CustomerCard({ customer }: { customer: Customer }) {
 }
 
 function getSegment(customer: Customer) {
+  if (customer.customer_segment) {
+    return customer.customer_segment;
+  }
   if (customer.contract_type === "Month-to-month" && customer.late_payments > 1) {
     return "High-risk flexible";
   }
@@ -50,4 +54,12 @@ function getSegment(customer: Customer) {
     return "Loyal long-tenure";
   }
   return "Standard monitored";
+}
+
+function formatMoney(value: number) {
+  return `$${value.toFixed(2)}`;
+}
+
+function formatNumber(value: number) {
+  return Number.isInteger(value) ? value.toString() : value.toFixed(1);
 }

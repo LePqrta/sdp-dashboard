@@ -16,7 +16,12 @@ def select_best_global_model(metrics: list[ModelMetrics]) -> BestModelResponse:
 
 
 def select_best_for_customer(results: list[PredictionResult]) -> PredictionResult:
-    return max(results, key=lambda result: result.churn_probability)
+    validated_results = [
+        result
+        for result in results
+        if result.source not in {"mock_baseline", "unavailable"} and result.status != "failed"
+    ]
+    return max(validated_results or results, key=lambda result: result.churn_probability)
 
 
 def _global_score(metric: ModelMetrics) -> float:
