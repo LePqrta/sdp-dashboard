@@ -1,26 +1,26 @@
 {
   "CUST-1001": [
-    { "model_name": "TFT", "churn_probability": 0.74, "prediction_label": "Churn", "confidence": 0.82, "inference_ms": 43.1 },
-    { "model_name": "TabNet", "churn_probability": 0.61, "prediction_label": "Churn", "confidence": 0.69, "inference_ms": 18.7 }
+    { "model_name": "TFT", "churn_probability": 0.74, "prediction_label": "Churn", "confidence": 0.82 },
+    { "model_name": "TabNet", "churn_probability": 0.61, "prediction_label": "Churn", "confidence": 0.69 }
   ],
   "CUST-1002": [
-    { "model_name": "TFT", "churn_probability": 0.31, "prediction_label": "Not Churn", "confidence": 0.72, "inference_ms": 42.4 },
-    { "model_name": "TabNet", "churn_probability": 0.28, "prediction_label": "Not Churn", "confidence": 0.76, "inference_ms": 19.1 }
+    { "model_name": "TFT", "churn_probability": 0.31, "prediction_label": "Not Churn", "confidence": 0.72 },
+    { "model_name": "TabNet", "churn_probability": 0.28, "prediction_label": "Not Churn", "confidence": 0.76 }
   ],
   "CUST-1003": [
-    { "model_name": "TFT", "churn_probability": 0.16, "prediction_label": "Not Churn", "confidence": 0.88, "inference_ms": 42.9 },
-    { "model_name": "TabNet", "churn_probability": 0.2, "prediction_label": "Not Churn", "confidence": 0.81, "inference_ms": 18.6 }
+    { "model_name": "TFT", "churn_probability": 0.16, "prediction_label": "Not Churn", "confidence": 0.88 },
+    { "model_name": "TabNet", "churn_probability": 0.2, "prediction_label": "Not Churn", "confidence": 0.81 }
   ],
   "CUST-1004": [
-    { "model_name": "TFT", "churn_probability": 0.83, "prediction_label": "Churn", "confidence": 0.87, "inference_ms": 43.5 },
-    { "model_name": "TabNet", "churn_probability": 0.72, "prediction_label": "Churn", "confidence": 0.78, "inference_ms": 19.4 }
+    { "model_name": "TFT", "churn_probability": 0.83, "prediction_label": "Churn", "confidence": 0.87 },
+    { "model_name": "TabNet", "churn_probability": 0.72, "prediction_label": "Churn", "confidence": 0.78 }
   ],
   "CUST-1005": [
-    { "model_name": "TFT", "churn_probability": 0.49, "prediction_label": "Not Churn", "confidence": 0.58, "inference_ms": 42.1 },
-    { "model_name": "TabNet", "churn_probability": 0.46, "prediction_label": "Not Churn", "confidence": 0.6, "inference_ms": 18.8 }
+    { "model_name": "TFT", "churn_probability": 0.49, "prediction_label": "Not Churn", "confidence": 0.58 },
+    { "model_name": "TabNet", "churn_probability": 0.46, "prediction_label": "Not Churn", "confidence": 0.6 }
   ],
   "default": [
-    { "model_name": "TFT", "churn_probability": 0.57, "prediction_label": "Churn", "confidence": 0.66, "inference_ms": 42.6 },
-    { "model_name": "TabNet", "churn_probability": 0.5, "prediction_label": "Churn", "confidence": 0.59, "inference_ms": 18.9 }
+    { "model_name": "TFT", "churn_probability": 0.57, "prediction_label": "Churn", "confidence": 0.66 },
+    { "model_name": "TabNet", "churn_probability": 0.5, "prediction_label": "Churn", "confidence": 0.59 }
   ]
 }

@@ -3,15 +3,14 @@ from pydantic import BaseModel
 
 class ModelMetrics(BaseModel):
     model_name: str
-    accuracy: float
-    precision: float
-    recall: float
-    f1_score: float
-    roc_auc: float
-    pr_auc: float
-    model_size_mb: float
-    average_inference_ms: float
-    threshold: float
+    accuracy: float | None
+    precision: float | None
+    recall: float | None
+    f1_score: float | None
+    roc_auc: float | None
+    pr_auc: float | None
+    model_size_mb: float | None
+    threshold: float | None
 
 
 class BestModelResponse(BaseModel):

@@ -23,7 +23,6 @@ export function PredictionTable({
               <th className="py-3 pr-4 font-semibold">Churn Probability</th>
               <th className="py-3 pr-4 font-semibold">Prediction</th>
               <th className="py-3 pr-4 font-semibold">Confidence</th>
-              <th className="py-3 pr-4 font-semibold">Inference</th>
               <th className="py-3 pr-4 font-semibold">Source</th>
             </tr>
           </thead>
@@ -56,7 +55,6 @@ export function PredictionTable({
                     </span>
                   </td>
                   <td className="py-3 pr-4">{(item.confidence * 100).toFixed(1)}%</td>
-                  <td className="py-3 pr-4">{item.inference_ms.toFixed(1)} ms</td>
                   <td className="py-3 pr-4"><PredictionSourceBadge prediction={item} /></td>
                 </tr>
               );

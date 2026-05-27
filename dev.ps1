@@ -4,6 +4,7 @@ $RootDir = $PSScriptRoot
 $BackendDir = Join-Path $RootDir "backend"
 $FrontendDir = Join-Path $RootDir "frontend"
 $VenvPython = Join-Path $BackendDir ".venv\Scripts\python.exe"
+$PidDir = Join-Path $RootDir ".dashboard-pids"
 
 function Test-PythonPackage {
     param([string]$PackageName)
@@ -85,10 +86,16 @@ if (Test-PortOpen 8000) {
     Write-Host "Port 8000 is already in use. Backend appears to be running."
 }
 else {
-    Start-Process -FilePath $VenvPython `
+    if (-not (Test-Path $PidDir)) {
+        New-Item -ItemType Directory -Path $PidDir | Out-Null
+    }
+
+    $BackendProcess = Start-Process -FilePath $VenvPython `
         -ArgumentList @("-m", "uvicorn", "app.main:app", "--reload", "--port", "8000") `
         -WorkingDirectory $BackendDir `
-        -WindowStyle Hidden | Out-Null
+        -WindowStyle Hidden `
+        -PassThru
+    Set-Content -Path (Join-Path $PidDir "backend.pid") -Value $BackendProcess.Id
 }
 
 Write-Host "Frontend logs below. Press Ctrl+C to stop the frontend server."

@@ -11,7 +11,7 @@ import { PredictionTable } from "@/components/PredictionTable";
 import { ProbabilityChart } from "@/components/ProbabilityChart";
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { SlowLoadingNotice } from "@/components/SlowLoadingNotice";
-import { api, BestModel, Customer, PredictionResponse } from "@/lib/api";
+import { api, Customer, PredictionResponse } from "@/lib/api";
 
 type PredictionPageProps = {
   params: { customer_id: string };
@@ -21,22 +21,19 @@ export default function PredictionPage({ params }: PredictionPageProps) {
   const customerId = decodeURIComponent(params.customer_id);
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [prediction, setPrediction] = useState<PredictionResponse | null>(null);
-  const [bestModel, setBestModel] = useState<BestModel | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([api.getCustomer(customerId), api.predict(customerId), api.getBestModel()])
-      .then(([customerData, predictionData, bestModelData]) => {
+    Promise.all([api.getCustomer(customerId), api.predict(customerId)])
+      .then(([customerData, predictionData]) => {
         setCustomer(customerData);
         setPrediction(predictionData);
-        setBestModel(bestModelData);
       })
       .catch(() => setError("Could not load prediction results for this customer."));
   }, [customerId]);
 
   const highest = prediction?.highest_probability_model;
   const highestPrediction = prediction?.predictions.find((item) => item.model_name === highest);
-  const finalModel = highest === bestModel?.model_name ? highest : `${highest ?? "Selected model"} with global context from ${bestModel?.model_name ?? "best model"}`;
 
   return (
     <div>
@@ -95,8 +92,8 @@ export default function PredictionPage({ params }: PredictionPageProps) {
                 tone={highestPrediction?.prediction_label === "Churn" ? "amber" : "green"}
               />
               <RecommendationCard
-                title="Final recommended model"
-                body={`${finalModel}. ${prediction.recommendation}`}
+                title="Prediction summary"
+                body={prediction.recommendation}
                 tone="blue"
               />
             </div>

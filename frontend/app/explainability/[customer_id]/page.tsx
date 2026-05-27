@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CustomerCard } from "@/components/CustomerCard";
 import { LoadingState } from "@/components/LoadingState";
 import { ModelExplanationCard } from "@/components/ModelExplanationCard";
 import { PageHeader } from "@/components/PageHeader";
 import { RecommendationCard } from "@/components/RecommendationCard";
-import { api, Customer, ExplanationFeature, ExplanationResponse } from "@/lib/api";
+import { api, Customer, ExplanationResponse } from "@/lib/api";
 
 type ExplainabilityPageProps = {
   params: { customer_id: string };
@@ -28,20 +28,12 @@ export default function ExplainabilityPage({ params }: ExplainabilityPageProps) 
       .catch(() => setError("Could not load explainability data for this customer."));
   }, [customerId]);
 
-  const modelFeatures = useMemo(() => {
-    if (!explanation) return null;
-    return {
-      tft: explanation.features,
-      tabnet: scaleFeatures(explanation.features, 0.86),
-    };
-  }, [explanation]);
-
   return (
     <div>
       <PageHeader
         eyebrow="Explainability"
         title={`Explainability: ${customerId}`}
-        description="A focused placeholder page for model-specific interpretation outputs that can later be replaced with real SHAP, attention, masks, or post-hoc explainers."
+        description="Precomputed model-derived local importance from the TFT and TabNet artifacts for the selected customer."
         actions={
           <>
             <Link href={`/predictions/${customerId}`} className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-[#256864]">
@@ -55,51 +47,34 @@ export default function ExplainabilityPage({ params }: ExplainabilityPageProps) 
       />
 
       {error ? <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{error}</div> : null}
-      {!explanation && !error ? <LoadingState label="Loading mock explainability output..." /> : null}
+      {!explanation && !error ? <LoadingState label="Loading explainability output..." /> : null}
 
-      {explanation && modelFeatures ? (
+      {explanation ? (
         <div className="space-y-6">
           {customer ? <CustomerCard customer={customer} /> : null}
 
           <RecommendationCard
-            title="Top churn reasons"
-            body={explanation.summary.join(" ")}
+            title="Top model factors"
+            body="These factors are compact precomputed local importances from the selected model artifacts."
             tone="blue"
           />
 
-          <ModelExplanationCard
-            modelName="TFT"
-            badge="Attention and variable importance"
-            description="Mock attention-style variable importance for the temporal fusion transformer. Real attention weights and static covariate importances can be plugged in later."
-            features={modelFeatures.tft}
-            summary={[
-              "Highlights temporal and static drivers together.",
-              "Useful for explaining why risk rises across recent customer behavior.",
-              "Future version can display attention heatmaps by timestep.",
-            ]}
-          />
+          {explanation.warnings.length ? (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-800">
+              {explanation.warnings.map((warning) => (
+                <p key={warning}>{warning}</p>
+              ))}
+            </div>
+          ) : null}
 
-          <ModelExplanationCard
-            modelName="TabNet"
-            badge="Local feature masks"
-            description="Mock TabNet feature mask interpretation. This section is designed for local feature selection strengths and per-decision-step masks."
-            features={modelFeatures.tabnet}
-            summary={[
-              "Emphasizes sparse local feature selection.",
-              "Good fit for tabular customer attributes.",
-              "Future version can expose mask values per decision step.",
-            ]}
-          />
+          <div className="space-y-5">
+            {explanation.models.map((modelExplanation) => (
+              <ModelExplanationCard key={modelExplanation.model} explanation={modelExplanation} />
+            ))}
+          </div>
 
         </div>
       ) : null}
     </div>
   );
-}
-
-function scaleFeatures(features: ExplanationFeature[], factor: number) {
-  return features.map((item) => ({
-    ...item,
-    contribution: Number((item.contribution * factor).toFixed(3)),
-  }));
 }

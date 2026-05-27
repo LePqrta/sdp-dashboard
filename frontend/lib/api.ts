@@ -2,15 +2,14 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8
 
 export type ModelMetrics = {
   model_name: string;
-  accuracy: number;
-  precision: number;
-  recall: number;
-  f1_score: number;
-  roc_auc: number;
-  pr_auc: number;
-  model_size_mb: number;
-  average_inference_ms: number;
-  threshold: number;
+  accuracy: number | null;
+  precision: number | null;
+  recall: number | null;
+  f1_score: number | null;
+  roc_auc: number | null;
+  pr_auc: number | null;
+  model_size_mb: number | null;
+  threshold: number | null;
 };
 
 export type Customer = {
@@ -41,7 +40,6 @@ export type PredictionResult = {
   churn_probability: number;
   prediction_label: "Churn" | "Not Churn";
   confidence: number;
-  inference_ms: number;
   source?: "live_model" | "cached_fallback" | "mock_baseline" | "unavailable" | string | null;
   status?: "ok" | "fallback" | "mock" | "failed" | string | null;
   message?: string | null;
@@ -52,6 +50,40 @@ export type CustomerPage = {
   total: number;
   limit: number;
   offset: number;
+};
+
+export type CustomerFilterKey =
+  | "all"
+  | "high_churn_risk"
+  | "growing_activity"
+  | "stable_monitored"
+  | "month_to_month"
+  | "one_year"
+  | "two_year"
+  | "train"
+  | "validation"
+  | "test"
+  | "sample";
+
+export type CustomerSortKey =
+  | "customer_id"
+  | "history"
+  | "tenure"
+  | "segment"
+  | "activity"
+  | "spend"
+  | "days_since_last_txn"
+  | "total_lifetime_spend";
+
+export type CustomerSortDirection = "asc" | "desc";
+
+export type CustomerPageParams = {
+  page: number;
+  limit: number;
+  q?: string;
+  filter?: CustomerFilterKey;
+  sort?: CustomerSortKey;
+  direction?: CustomerSortDirection;
 };
 
 export type PredictionResponse = {
@@ -68,14 +100,28 @@ export type BestModel = {
 };
 
 export type ExplanationFeature = {
-  feature: string;
-  contribution: number;
+  name: string;
+  importance: number;
+  direction: "unknown" | "increases_churn" | "decreases_churn";
+  display_value?: string | null;
+};
+
+export type ModelExplanation = {
+  model: "TFT" | "TabNet" | string;
+  prediction_label?: string | null;
+  churn_probability?: number | null;
+  top_features: ExplanationFeature[];
+  explanation_type: string;
+  notes: string[];
+  warnings: string[];
 };
 
 export type ExplanationResponse = {
   customer_id: string;
-  features: ExplanationFeature[];
-  summary: string[];
+  models: ModelExplanation[];
+  warnings: string[];
+  source: string;
+  artifact_version?: Record<string, string> | null;
 };
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
@@ -98,8 +144,27 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export const api = {
   getMetrics: () => request<ModelMetrics[]>("/metrics"),
   getCustomers: () => request<Customer[]>("/customers"),
-  getCustomerPage: (page: number, limit: number) =>
-    request<CustomerPage>(`/customers/page?offset=${(page - 1) * limit}&limit=${limit}`),
+  getCustomerPage: ({ page, limit, q, filter, sort, direction }: CustomerPageParams) => {
+    const query = new URLSearchParams({
+      offset: String((page - 1) * limit),
+      limit: String(limit),
+    });
+
+    if (q?.trim()) {
+      query.set("q", q.trim());
+    }
+    if (filter) {
+      query.set("filter", filter);
+    }
+    if (sort) {
+      query.set("sort", sort);
+    }
+    if (direction) {
+      query.set("direction", direction);
+    }
+
+    return request<CustomerPage>(`/customers/page?${query.toString()}`);
+  },
   getCustomer: (customerId: string) => request<Customer>(`/customers/${customerId}`),
   getRandomCustomer: () => request<Customer>("/customers/random"),
   getBestModel: () => request<BestModel>("/best-model"),

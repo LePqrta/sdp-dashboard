@@ -12,6 +12,7 @@ out/
 # Environment
 .env
 .env.local
+.dashboard-pids/
 
 # Local model artifacts and sample datasets
 backend/app/artifacts/**/*.ckpt
@@ -21,6 +22,7 @@ backend/app/artifacts/**/*.zip
 backend/app/artifacts/**/*.pt
 backend/app/artifacts/**/*.pth
 backend/app/artifacts/**/*.onnx
+backend/app/artifacts/models/explainability/benchmark_customer_explanations.json
 
 # Editor / OS
 .DS_Store

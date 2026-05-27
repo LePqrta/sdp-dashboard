@@ -10,7 +10,6 @@ class PredictionResult(BaseModel):
     churn_probability: float
     prediction_label: str
     confidence: float
-    inference_ms: float
     source: str | None = None
     status: str | None = None
     message: str | None = None

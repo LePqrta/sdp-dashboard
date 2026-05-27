@@ -9,7 +9,7 @@ def select_best_global_model(metrics: list[ModelMetrics]) -> BestModelResponse:
         model_name=best_metric.model_name,
         score=round(best_score, 4),
         reason=(
-            "Weighted score favors recall, F1-score, ROC-AUC, and lower inference time "
+            "Weighted score favors recall, F1-score, and ROC-AUC "
             "for a balanced demo recommendation."
         ),
     )
@@ -25,10 +25,8 @@ def select_best_for_customer(results: list[PredictionResult]) -> PredictionResul
 
 
 def _global_score(metric: ModelMetrics) -> float:
-    normalized_speed = max(0.0, 1 - (metric.average_inference_ms / 100))
     return (
-        0.30 * metric.recall
-        + 0.30 * metric.f1_score
-        + 0.30 * metric.roc_auc
-        + 0.10 * normalized_speed
+        0.34 * (metric.recall or 0.0)
+        + 0.33 * (metric.f1_score or 0.0)
+        + 0.33 * (metric.roc_auc or 0.0)
     )

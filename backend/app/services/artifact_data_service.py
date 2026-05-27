@@ -38,6 +38,15 @@ TFT_CHECKPOINT_PATH = (
 TFT_CALIBRATOR_PATH = ARTIFACTS_DIR / "models" / "tft" / "calibration" / "isotonic_calibrator.pkl"
 DEMO_CUSTOMER_LIMIT = 5000
 
+_CUSTOMER_FILTER_ALIASES: dict[str, tuple[str, ...]] = {
+    "high_churn_risk": ("high churn risk",),
+    "growing_activity": ("growing activity",),
+    "stable_monitored": ("stable monitored",),
+    "month_to_month": ("month-to-month", "month to month"),
+    "one_year": ("one year",),
+    "two_year": ("two year",),
+}
+
 
 def _import_pandas() -> Any:
     try:
@@ -111,11 +120,140 @@ def load_artifact_customers() -> list[Customer]:
     return [_row_to_customer(row) for _, row in latest_rows.iterrows()]
 
 
-def load_artifact_customer_page(offset: int, limit: int) -> tuple[list[Customer], int]:
+def load_artifact_customer_page(
+    offset: int,
+    limit: int,
+    q: str | None = None,
+    filter: str | None = None,
+    sort: str = "customer_id",
+    direction: str = "asc",
+) -> tuple[list[Customer], int]:
     latest_rows = load_demo_customer_rows()
+    latest_rows = _search_customer_rows(latest_rows, q)
+    latest_rows = _filter_customer_rows(latest_rows, filter)
+    latest_rows = _sort_customer_rows(latest_rows, sort, direction)
     total = int(len(latest_rows))
     page_rows = latest_rows.iloc[offset : offset + limit]
     return [_row_to_customer(row) for _, row in page_rows.iterrows()], total
+
+
+def _search_customer_rows(rows: Any, q: str | None) -> Any:
+    search_term = (q or "").strip().casefold()
+    if not search_term:
+        return rows
+
+    mask = [_customer_row_search_text(row).find(search_term) >= 0 for _, row in rows.iterrows()]
+    return rows.loc[mask]
+
+
+def _filter_customer_rows(rows: Any, filter: str | None) -> Any:
+    filter_key = (filter or "all").strip().casefold()
+    if filter_key == "all":
+        return rows
+
+    aliases = _CUSTOMER_FILTER_ALIASES.get(filter_key, (filter_key.replace("_", " "),))
+    mask = [_customer_row_matches_filter(row, aliases) for _, row in rows.iterrows()]
+    return rows.loc[mask]
+
+
+def _sort_customer_rows(rows: Any, sort: str, direction: str) -> Any:
+    if rows.empty:
+        return rows
+
+    descending = direction.strip().casefold() == "desc"
+    sort_values = [_customer_row_sort_value(row, sort) for _, row in rows.iterrows()]
+    helper_column = "__customer_sort_value"
+    sortable_rows = rows.assign(**{helper_column: sort_values})
+    present_rows = sortable_rows[sortable_rows[helper_column].map(lambda value: not _is_missing_sort_value(value))]
+    missing_rows = sortable_rows[sortable_rows[helper_column].map(_is_missing_sort_value)]
+    sorted_rows = present_rows.sort_values(
+        helper_column,
+        ascending=not descending,
+        kind="mergesort",
+        key=lambda series: series.map(_normalize_sort_value),
+    )
+    pd = _import_pandas()
+    return pd.concat(
+        [
+            sorted_rows.drop(columns=[helper_column]),
+            missing_rows.drop(columns=[helper_column]),
+        ]
+    )
+
+
+def _customer_row_search_text(row: Any) -> str:
+    values = (
+        row.get("cust_id"),
+        _segment_for_row(row),
+        row.get("split"),
+        row.get("l3_component_category"),
+        row.get("history_months_available"),
+        row.get("tenure_months"),
+        row.get("txn_count_3m"),
+        row.get("spend_3m"),
+    )
+    return " ".join(str(value).casefold() for value in values if not _is_missing_sort_value(value))
+
+
+def _customer_row_matches_filter(row: Any, aliases: tuple[str, ...]) -> bool:
+    candidate_values = (
+        _segment_for_row(row),
+        row.get("split"),
+        row.get("l3_component_category"),
+    )
+    normalized_candidates = {
+        str(value).strip().casefold()
+        for value in candidate_values
+        if not _is_missing_sort_value(value)
+    }
+    return any(alias in normalized_candidates for alias in aliases)
+
+
+def _customer_row_sort_value(row: Any, sort: str) -> Any:
+    sort_key = sort.strip().casefold()
+    if sort_key == "customer_id":
+        return str(row.get("cust_id"))
+    if sort_key in {"history", "history_months_available"}:
+        return _numeric_row_value(row, "history_months_available", fallback_column="tenure_months")
+    if sort_key in {"tenure", "tenure_months"}:
+        return _numeric_row_value(row, "tenure_months")
+    if sort_key in {"segment", "customer_segment"}:
+        return _segment_for_row(row)
+    if sort_key in {"activity", "txn_count_3m"}:
+        return _numeric_row_value(row, "txn_count_3m")
+    if sort_key in {"spend", "spend_3m"}:
+        return _numeric_row_value(row, "spend_3m")
+    if sort_key == "days_since_last_txn":
+        return _numeric_row_value(row, "days_since_last_txn")
+    if sort_key == "total_lifetime_spend":
+        return _numeric_row_value(row, "total_lifetime_spend")
+    return str(row.get("cust_id"))
+
+
+def _numeric_row_value(row: Any, column: str, fallback_column: str | None = None) -> float | None:
+    value = row.get(column)
+    if _is_missing_sort_value(value):
+        if fallback_column is None:
+            return None
+        fallback = row.get(fallback_column)
+        if _is_missing_sort_value(fallback):
+            return None
+        return _to_float(fallback)
+    return _to_float(value)
+
+
+def _is_missing_sort_value(value: Any) -> bool:
+    try:
+        pd = _import_pandas()
+        return value is None or bool(pd.isna(value)) or str(value).strip() == ""
+    except (TypeError, ValueError):
+        return value is None or str(value).strip() == ""
+
+
+def _normalize_sort_value(value: Any) -> Any:
+    if isinstance(value, str):
+        return value.casefold()
+    return value
 
 
 def random_artifact_customer() -> Customer:

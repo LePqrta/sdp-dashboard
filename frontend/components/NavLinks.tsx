@@ -9,7 +9,7 @@ export const navItems = [
   { href: "/customers", label: "Cohort Desk", marker: "02" },
 ];
 
-export function SidebarNavLinks() {
+export function SidebarNavLinks({ collapsed = false }: { collapsed?: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -20,8 +20,10 @@ export function SidebarNavLinks() {
           <Link
             key={item.href}
             href={item.href}
+            title={collapsed ? item.label : undefined}
             className={[
-              "group flex items-center gap-3 rounded-lg border px-3 py-3 text-sm font-semibold",
+              "group flex items-center rounded-lg border px-3 py-3 text-sm font-semibold",
+              collapsed ? "justify-center gap-0" : "gap-3",
               active
                 ? "border-mint/60 bg-panel text-ink shadow-[0_14px_30px_rgba(47,125,120,0.13)]"
                 : "border-transparent text-slate-600 hover:border-line hover:bg-panel/70 hover:text-ink",
@@ -37,7 +39,7 @@ export function SidebarNavLinks() {
             >
               {item.marker}
             </span>
-            <span>{item.label}</span>
+            <span className={collapsed ? "sr-only" : ""}>{item.label}</span>
           </Link>
         );
       })}

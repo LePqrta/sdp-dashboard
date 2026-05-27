@@ -1,26 +1,30 @@
 import type { ExplanationFeature } from "@/lib/api";
 
 export function ShapBarChart({ features }: { features: ExplanationFeature[] }) {
-  const max = Math.max(...features.map((item) => Math.abs(item.contribution)), 0.01);
+  const max = Math.max(...features.map((item) => Math.abs(item.importance)), 0.01);
 
   return (
     <div className="space-y-3">
       {features.map((item) => {
-        const positive = item.contribution >= 0;
-        const width = (Math.abs(item.contribution) / max) * 100;
+        const width = (Math.abs(item.importance) / max) * 100;
         return (
-          <div key={item.feature} className="grid gap-2 md:grid-cols-[180px_1fr_56px] md:items-center">
-            <p className="text-sm font-semibold text-ink">{item.feature}</p>
+          <div key={item.name} className="grid gap-2 md:grid-cols-[200px_1fr_72px] md:items-center">
+            <div>
+              <p className="text-sm font-semibold text-ink">{item.name}</p>
+              {item.display_value ? (
+                <p className="text-xs text-muted">Value: {item.display_value}</p>
+              ) : null}
+            </div>
             <div className="h-3 rounded-full bg-vellum">
               <div
                 className="h-3 rounded-full animate-width-in"
                 style={{
                   width: `${width}%`,
-                  backgroundColor: positive ? "#7f69ab" : "#84ccc5",
+                  backgroundColor: "#7f69ab",
                 }}
               />
             </div>
-            <p className="text-right text-sm font-semibold text-muted">{item.contribution.toFixed(3)}</p>
+            <p className="text-right text-sm font-semibold text-muted">{item.importance.toFixed(3)}</p>
           </div>
         );
       })}

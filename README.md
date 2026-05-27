@@ -2,12 +2,13 @@
 
 Full-stack MVP for comparing TFT and TabNet churn prediction models for a graduation project.
 
-## Stack
+## What This Project Does
 
-- Frontend: Next.js, TypeScript, Tailwind CSS, lightweight SVG/CSS charts
-- Backend: FastAPI, Python, mock JSON data
+- Frontend: Next.js, TypeScript, and Tailwind CSS dashboard for comparing TFT and TabNet churn models. It shows global model metrics, customer lookup, customer-level predictions, and explainability views.
+- Backend: FastAPI service that exposes metrics, sample customers, predictions, explanations, and best-model selection. It reads the representative parquet sample and local TFT/TabNet artifacts when available, with demo-safe fallbacks.
+- Data: the app uses a curated sample dataset under `backend/app/artifacts` instead of the full 14 GB source dataset.
 
-## Run Everything
+## Run Locally
 
 From the project root:
 
@@ -30,6 +31,19 @@ This starts:
 - Frontend: `http://localhost:3000`
 
 Press `Ctrl+C` in the terminal to stop both servers.
+
+The first run creates the backend virtual environment if needed, installs backend dependencies, installs frontend dependencies, sets `NEXT_PUBLIC_API_BASE_URL=http://localhost:8000`, and starts both services.
+
+## Validate Model Artifacts
+
+Before presenting or changing artifact-backed behavior, run the backend validation script:
+
+```bash
+cd backend
+.venv\Scripts\python scripts\validate_model_artifacts.py
+```
+
+The script checks the representative sample parquet, required TFT and TabNet artifact files, live inference paths, cached fallback predictions, and live-vs-fallback consistency for a few sample customers. For machine-readable output, add `--json`.
 
 ## Run Optimized Demo Mode
 

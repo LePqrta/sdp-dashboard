@@ -41,10 +41,9 @@ export function PredictionCard({
           />
         </div>
       </div>
-      <div className="mt-5 grid grid-cols-3 gap-3 text-sm">
+      <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
         <Info label="Label" value={prediction.prediction_label} />
         <Info label="Confidence" value={`${(prediction.confidence * 100).toFixed(1)}%`} />
-        <Info label="Inference" value={`${prediction.inference_ms.toFixed(1)} ms`} />
       </div>
       {prediction.message ? <p className="mt-4 text-xs leading-5 text-muted">{prediction.message}</p> : null}
     </article>

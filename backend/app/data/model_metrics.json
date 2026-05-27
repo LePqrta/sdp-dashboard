@@ -8,7 +8,6 @@
     "roc_auc": 0.921,
     "pr_auc": 0.874,
     "model_size_mb": 118.4,
-    "average_inference_ms": 42.6,
     "threshold": 0.52
   },
   {
@@ -20,7 +19,6 @@
     "roc_auc": 0.891,
     "pr_auc": 0.836,
     "model_size_mb": 38.7,
-    "average_inference_ms": 18.9,
     "threshold": 0.48
   }
 ]

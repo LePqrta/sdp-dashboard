@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import time
 import tempfile
 from functools import lru_cache
 from pathlib import Path
@@ -24,13 +23,11 @@ for logger_name in ("lightning", "lightning.pytorch", "pytorch_lightning"):
 
 
 def predict_tabnet(customer_id: str) -> PredictionResult:
-    started = time.perf_counter()
     try:
         probability = _predict_tabnet_live_probability(customer_id)
         return _prediction_result(
             model_name="TabNet",
             probability=probability,
-            inference_ms=_elapsed_ms(started),
             source="live_model",
             status="ok",
             message="Live TabNet inference completed from the local model artifact.",
@@ -40,7 +37,6 @@ def predict_tabnet(customer_id: str) -> PredictionResult:
         return _prediction_result(
             model_name="TabNet",
             probability=probability,
-            inference_ms=_elapsed_ms(started),
             source="cached_fallback",
             status="fallback",
             message=f"Live TabNet inference was unavailable, so cached validated output was used. {type(exc).__name__}: {exc}",
@@ -48,13 +44,11 @@ def predict_tabnet(customer_id: str) -> PredictionResult:
 
 
 def predict_tft(customer_id: str) -> PredictionResult:
-    started = time.perf_counter()
     try:
         probability = _predict_tft_live_probability(customer_id)
         return _prediction_result(
             model_name="TFT",
             probability=probability,
-            inference_ms=_elapsed_ms(started),
             source="live_model",
             status="ok",
             message="Live TFT inference completed from the local checkpoint and isotonic calibrator.",
@@ -64,7 +58,6 @@ def predict_tft(customer_id: str) -> PredictionResult:
         return _prediction_result(
             model_name="TFT",
             probability=probability,
-            inference_ms=_elapsed_ms(started),
             source="cached_fallback",
             status="fallback",
             message=f"Live TFT inference was unavailable, so cached validated output was used. {type(exc).__name__}: {exc}",
@@ -190,7 +183,6 @@ def _prediction_result(
     *,
     model_name: str,
     probability: float,
-    inference_ms: float,
     source: str,
     status: str,
     message: str,
@@ -200,7 +192,6 @@ def _prediction_result(
         churn_probability=probability,
         prediction_label="Churn" if probability >= 0.5 else "Not Churn",
         confidence=max(probability, 1 - probability),
-        inference_ms=inference_ms,
         source=source,
         status=status,
         message=message,
@@ -211,7 +202,3 @@ def _valid_probability(probability: float, context: str) -> float:
     if not 0 <= probability <= 1:
         raise ValueError(f"{context} returned invalid probability: {probability}")
     return probability
-
-
-def _elapsed_ms(started: float) -> float:
-    return round((time.perf_counter() - started) * 1000, 2)

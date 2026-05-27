@@ -21,6 +21,24 @@ export function ModelComparisonChart({
   metrics: ModelMetrics[];
   keys?: Array<keyof typeof metricMap>;
 }) {
+  const availableKeys = keys.filter((key) =>
+    metrics.some((model) => typeof model[metricMap[key]] === "number"),
+  );
+  const values = availableKeys.flatMap((key) =>
+    metrics.flatMap((model) => {
+      const value = model[metricMap[key]];
+      return typeof value === "number" ? [value] : [];
+    }),
+  );
+
+  if (!availableKeys.length || !values.length) {
+    return (
+      <div className="rounded-lg border border-dashed border-line bg-white/70 p-5 text-sm text-muted">
+        No available metrics for this comparison.
+      </div>
+    );
+  }
+
   const chartHeight = 280;
   const top = 24;
   const bottom = 46;
@@ -29,14 +47,19 @@ export function ModelComparisonChart({
   const width = 720;
   const innerHeight = chartHeight - top - bottom;
   const innerWidth = width - left - right;
-  const groupWidth = innerWidth / metrics.length;
-  const barWidth = Math.min(28, (groupWidth - 30) / keys.length);
+  const groupWidth = innerWidth / Math.max(metrics.length, 1);
+  const barWidth = Math.max(10, Math.min(30, (groupWidth - 34) / availableKeys.length - 4));
+  const rawMin = Math.min(...values);
+  const minTick = Math.max(0, Math.floor((rawMin - 0.05) * 10) / 10);
+  const maxTick = 1;
+  const tickRange = Math.max(maxTick - minTick, 0.1);
+  const ticks = Array.from({ length: 4 }, (_, index) => minTick + (tickRange / 3) * index);
 
   return (
-    <div className="overflow-x-auto">
-      <svg viewBox={`0 0 ${width} ${chartHeight}`} className="h-80 min-w-[640px]">
-        {[0.7, 0.8, 0.9, 1].map((tick) => {
-          const y = top + (1 - (tick - 0.7) / 0.3) * innerHeight;
+    <div>
+      <svg viewBox={`0 0 ${width} ${chartHeight}`} className="h-80 w-full">
+        {ticks.map((tick) => {
+          const y = top + (1 - (tick - minTick) / tickRange) * innerHeight;
           return (
             <g key={tick}>
               <line x1={left} x2={width - right} y1={y} y2={y} stroke="#dbe5dc" strokeDasharray="4 6" />
@@ -50,26 +73,48 @@ export function ModelComparisonChart({
           const groupX = left + modelIndex * groupWidth + groupWidth / 2;
           return (
             <g key={model.model_name}>
-              {keys.map((key, keyIndex) => {
+              {availableKeys.map((key, keyIndex) => {
                 const value = model[metricMap[key]];
-                const normalized = Math.max(0, Math.min(1, (value - 0.7) / 0.3));
+                const normalized =
+                  typeof value === "number"
+                    ? Math.max(0, Math.min(1, (value - minTick) / tickRange))
+                    : 0;
                 const barHeight = normalized * innerHeight;
-                const x = groupX - (keys.length * barWidth) / 2 + keyIndex * (barWidth + 4);
+                const x =
+                  groupX -
+                  (availableKeys.length * barWidth + (availableKeys.length - 1) * 4) / 2 +
+                  keyIndex * (barWidth + 4);
                 const y = top + innerHeight - barHeight;
                 return (
                   <g key={key}>
-                    <rect
-                      x={x}
-                      y={y}
-                      width={barWidth}
-                      height={barHeight}
-                      rx={6}
-                      fill={colors[key]}
-                      className="origin-bottom animate-chart-rise"
-                    />
-                    {keys.length === 1 ? (
-                      <text x={x + barWidth / 2} y={y - 8} textAnchor="middle" className="fill-ink text-[12px] font-semibold">
-                        {(value * 100).toFixed(1)}%
+                    {typeof value === "number" ? (
+                      <rect
+                        x={x}
+                        y={y}
+                        width={barWidth}
+                        height={Math.max(3, barHeight)}
+                        rx={6}
+                        fill={colors[key]}
+                        className="origin-bottom animate-chart-rise"
+                      />
+                    ) : (
+                      <text
+                        x={x + barWidth / 2}
+                        y={top + innerHeight - 8}
+                        textAnchor="middle"
+                        className="fill-slate-400 text-[10px] font-semibold"
+                      >
+                        N/A
+                      </text>
+                    )}
+                    {availableKeys.length === 1 ? (
+                      <text
+                        x={x + barWidth / 2}
+                        y={y - 8}
+                        textAnchor="middle"
+                        className="fill-ink text-[12px] font-semibold"
+                      >
+                        {typeof value === "number" ? `${(value * 100).toFixed(1)}%` : ""}
                       </text>
                     ) : null}
                   </g>
@@ -83,7 +128,7 @@ export function ModelComparisonChart({
         })}
       </svg>
       <div className="mt-2 flex flex-wrap gap-3 text-xs font-semibold text-slate-600">
-        {keys.map((key) => (
+        {availableKeys.map((key) => (
           <span key={key} className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: colors[key] }} />
             {key}

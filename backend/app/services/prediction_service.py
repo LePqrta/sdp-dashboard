@@ -42,7 +42,6 @@ def _safe_model_result(model_name: str, callback) -> PredictionResult:
             churn_probability=0.0,
             prediction_label="Not Churn",
             confidence=0.0,
-            inference_ms=0.0,
             source="unavailable",
             status="failed",
             message=f"{model_name} prediction is unavailable: {type(exc).__name__}: {exc}",

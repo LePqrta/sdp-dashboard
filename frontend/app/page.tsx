@@ -6,16 +6,16 @@ import { ShimmerText } from "@/components/ShimmerText";
 
 const features = [
   {
-    title: "Global model comparison",
-    body: "Review validation metrics for TFT and TabNet with balanced accuracy, recall, F1, ROC-AUC, size, and speed views.",
+    title: "Model comparison",
+    body: "Review validation metrics for TFT and TabNet with balanced accuracy, recall, F1, ROC-AUC, and model size views.",
   },
   {
     title: "Customer-level prediction",
     body: "Select one representative demo customer and run the same prediction request through both model interfaces.",
   },
   {
-    title: "Explainability placeholders",
-    body: "Reserve a dedicated analysis surface for SHAP-style feature contributions, attention, and model-specific explanations.",
+    title: "Model-derived explainability",
+    body: "Inspect precomputed customer-level factors from the TFT and TabNet explanation artifacts.",
   },
 ];
 
@@ -55,9 +55,9 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-[#1c2430] p-5 text-white shadow-[0_24px_60px_rgba(28,36,48,0.22)]">
+            <div className="rounded-2xl border border-slate-200 bg-[#1c2430] p-6 text-white shadow-[0_24px_60px_rgba(28,36,48,0.22)] sm:p-7">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">Evaluation slate</p>
-              <div className="grid gap-4">
+              <div className="mt-5 grid gap-4">
                 {["TFT", "TabNet"].map((model, index) => (
                   <div
                     key={model}
@@ -98,7 +98,7 @@ export default function LandingPage() {
             <div>
               <h2 className="text-2xl font-semibold text-ink">Dashboard workflow</h2>
               <p className="mt-2 text-sm text-muted">
-                The app separates global evaluation from customer-level analysis for a cleaner demo story.
+                The app separates model-level metrics from customer-level analysis for a cleaner demo story.
               </p>
             </div>
           </div>

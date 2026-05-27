@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "powershell -ExecutionPolicy Bypass -File ./dev.ps1",
     "clean-frontend": "powershell -ExecutionPolicy Bypass -Command \"$p=(netstat -ano | Select-String ':3000' | ForEach-Object { ($_ -split '\\s+')[-1] } | Where-Object { $_ -match '^\\d+$' } | Select-Object -Unique); foreach($i in $p){ Stop-Process -Id ([int]$i) -Force -ErrorAction SilentlyContinue }; if(Test-Path frontend/.next){ Remove-Item frontend/.next -Recurse -Force }\"",
-    "stop": "powershell -ExecutionPolicy Bypass -File ./stop.ps1",
+    "stop": "node scripts/stop-local-services.js",
     "prepare-demo": "cd frontend && npm.cmd run build",
     "demo": "powershell -ExecutionPolicy Bypass -File ./demo.ps1"
   }
