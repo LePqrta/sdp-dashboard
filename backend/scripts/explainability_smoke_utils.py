@@ -37,7 +37,6 @@ def normalize_top_features(
         {
             "name": name,
             "importance": round(float(value), 6),
-            "direction": "unknown",
             "display_value": _format_display_value(display_values.get(name)),
         }
         for name, value in ranked[:top_k]

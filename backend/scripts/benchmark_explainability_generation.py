@@ -169,7 +169,6 @@ def benchmark(*, limit: int, top_k: int, model: ModelChoice, output: Path) -> di
             "model": model,
             "selected_customers": len(selected_ids),
             "total_sample_customers": total_customers,
-            "direction_policy": "unknown",
             "notes": [
                 "Only compact normalized top-k explanations are stored.",
                 "Raw TFT attention tensors and raw TabNet masks are not stored.",

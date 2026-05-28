@@ -32,7 +32,7 @@ backend\.venv\Scripts\python backend\scripts\smoke_tabnet_explainability.py --cu
 backend\.venv\Scripts\python backend\scripts\smoke_tft_explainability.py --customer-id 293243
 ```
 
-Both scripts print normalized top features with `direction: "unknown"` because native TabNet masks and TFT interpretation values are importance signals, not signed churn contributions.
+Both scripts print normalized top feature importance values from native TabNet masks and TFT interpretation output.
 
 ## Explainability precompute benchmark
 

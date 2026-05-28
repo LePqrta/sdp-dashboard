@@ -30,7 +30,7 @@ export default function LandingPage() {
           <div className="grid gap-8 p-7 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:p-12">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-teal-700">
-                Graduation project research studio
+                Senior Design Project
               </p>
               <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-tight text-ink sm:text-6xl">
                 <ShimmerText>Churn Prediction</ShimmerText>{" "}

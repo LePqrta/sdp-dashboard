@@ -90,10 +90,8 @@ def run(customer_id: str | None, top_k: int) -> dict[str, Any]:
         "artifact": str(TABNET_MODEL_PATH),
         "churn_probability": probability,
         "explanation_type": "native_tabnet_mask",
-        "direction_policy": "unknown",
         "notes": [
-            "TabNet native mask values are local feature importance, not signed churn contribution.",
-            "Direction is intentionally unknown.",
+            "TabNet native mask values are local feature importance.",
         ],
         "top_features": top_features,
         "elapsed_ms": round((time.perf_counter() - started) * 1000, 2),

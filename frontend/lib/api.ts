@@ -102,7 +102,6 @@ export type BestModel = {
 export type ExplanationFeature = {
   name: string;
   importance: number;
-  direction: "unknown" | "increases_churn" | "decreases_churn";
   display_value?: string | null;
 };
 

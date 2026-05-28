@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 class ExplanationFeature(BaseModel):
     name: str
     importance: float
-    direction: Literal["unknown", "increases_churn", "decreases_churn"] = "unknown"
     display_value: str | None = None
 
 

@@ -33,7 +33,6 @@ export default function ExplainabilityPage({ params }: ExplainabilityPageProps) 
       <PageHeader
         eyebrow="Explainability"
         title={`Explainability: ${customerId}`}
-        description="Precomputed model-derived local importance from the TFT and TabNet artifacts for the selected customer."
         actions={
           <>
             <Link href={`/predictions/${customerId}`} className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-[#256864]">

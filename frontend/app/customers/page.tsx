@@ -264,7 +264,7 @@ function CustomersPageContent() {
             <h2 className="text-2xl font-semibold text-ink">Representative sample workflow</h2>
             <p className="mt-3 text-sm leading-6 text-muted">
               Select a random customer, inspect their profile, then continue into the model prediction
-              comparison. Customer selection only happens on this page to keep the analysis flow clear.
+              comparison.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <button
@@ -295,7 +295,7 @@ function CustomersPageContent() {
               <p className="mt-3 text-3xl font-semibold text-ink">1000-5000</p>
               <p className="mt-2 text-sm leading-6 text-muted">
                 Intended demo sample size. This keeps the dashboard responsive while preserving a realistic
-                customer-level story for presentation.
+                customer-level story.
               </p>
             </div>
           </div>

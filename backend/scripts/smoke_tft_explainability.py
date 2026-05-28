@@ -168,10 +168,8 @@ def run(customer_id: str | None, top_k: int) -> dict[str, Any]:
         "churn_probability_raw": raw_probability,
         "explanation_type": "native_tft_interpret_output",
         "raw_interpretation_keys": keys,
-        "direction_policy": "unknown",
         "notes": [
-            "TFT interpretation values are variable/attention importance, not signed churn contribution.",
-            "Direction is intentionally unknown.",
+            "TFT interpretation values are variable/attention importance.",
         ],
         "top_features": top_features,
         "elapsed_ms": round((time.perf_counter() - started) * 1000, 2),

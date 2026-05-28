@@ -184,7 +184,6 @@ def generate(
             "model": model,
             "source": "native TabNet explain(X) and native TFT interpret_output over representative sample parquet",
             "artifact_version": _artifact_version(),
-            "direction_policy": "unknown",
             "notes": [
                 "Only compact normalized top-k explanations are stored.",
                 "Raw TFT attention tensors and raw TabNet masks are not stored.",
