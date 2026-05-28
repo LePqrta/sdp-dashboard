@@ -1,6 +1,6 @@
 # Churn Prediction Model Comparison Dashboard
 
-Full-stack MVP for comparing TFT and TabNet churn prediction models for a graduation project.
+Full-stack MVP for comparing TFT and TabNet churn prediction models for the graduation project.
 
 ## What This Project Does
 
