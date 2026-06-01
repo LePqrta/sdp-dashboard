@@ -17,12 +17,8 @@ const PAGE_SIZE = 25;
 
 const FILTER_OPTIONS: Array<{ value: CustomerFilterKey; label: string }> = [
   { value: "all", label: "All customers" },
-  { value: "high_churn_risk", label: "High churn risk" },
-  { value: "growing_activity", label: "Growing activity" },
-  { value: "stable_monitored", label: "Stable monitored" },
-  { value: "month_to_month", label: "Month-to-month" },
-  { value: "one_year", label: "One year" },
-  { value: "two_year", label: "Two year" },
+  { value: "churn", label: "Actual: Churn" },
+  { value: "not_churn", label: "Actual: Not Churn" },
   { value: "train", label: "Train split" },
   { value: "validation", label: "Validation split" },
   { value: "test", label: "Test split" },
@@ -31,9 +27,9 @@ const FILTER_OPTIONS: Array<{ value: CustomerFilterKey; label: string }> = [
 
 const CUSTOMER_TABLE_COLUMNS: Array<{ label: string; sort?: CustomerSortKey }> = [
   { label: "Customer", sort: "customer_id" },
+  { label: "Actual", sort: "actual_label" },
   { label: "History", sort: "history" },
   { label: "Tenure", sort: "tenure" },
-  { label: "Segment" },
   { label: "Activity", sort: "activity" },
 ];
 
@@ -352,7 +348,7 @@ function CustomersPageContent() {
               <input
                 value={listParams.q}
                 onChange={(event) => updateListParams({ q: event.target.value })}
-                placeholder="Customer, split, segment..."
+                placeholder="Customer, split, label..."
                 className="h-10 rounded-md border border-line bg-panel px-3 text-sm font-normal text-ink outline-none transition focus:border-accent focus:ring-2 focus:ring-mint/40"
               />
             </label>
@@ -423,11 +419,11 @@ function CustomersPageContent() {
           <div className="mt-4 overflow-x-auto">
             <table className="min-w-[900px] w-full table-fixed text-left text-sm">
               <colgroup>
-                <col className="w-[22%]" />
+                <col className="w-[20%]" />
+                <col className="w-[16%]" />
                 <col className="w-[14%]" />
                 <col className="w-[14%]" />
-                <col className="w-[22%]" />
-                <col className="w-[28%]" />
+                <col className="w-[36%]" />
               </colgroup>
               <thead className="text-muted">
                 <tr className="border-b border-line">
@@ -498,12 +494,21 @@ function CustomersPageContent() {
                   >
                     <td className="py-3 pr-4 font-semibold text-ink">{customer.customer_id}</td>
                     <td className="py-3 pr-4">
+                      <span
+                        className={[
+                          "rounded-full px-2 py-1 text-xs font-semibold",
+                          customer.actual_label === 1
+                            ? "bg-amber-50 text-warning"
+                            : "bg-emerald-50 text-success",
+                        ].join(" ")}
+                      >
+                        {customer.actual_label_name ?? "Unknown"}
+                      </span>
+                    </td>
+                    <td className="py-3 pr-4">
                       {customer.history_months_available ?? customer.age} months
                     </td>
                     <td className="py-3 pr-4">{customer.tenure_months} months</td>
-                    <td className="py-3 pr-4">
-                      {customer.customer_segment ?? customer.contract_type}
-                    </td>
                     <td className="py-3 pr-4">
                       {(customer.txn_count_3m ?? customer.support_tickets).toFixed(0)} txns / $
                       {(customer.spend_3m ?? customer.monthly_charges).toFixed(2)}

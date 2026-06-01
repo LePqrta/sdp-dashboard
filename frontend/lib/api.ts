@@ -25,7 +25,8 @@ export type Customer = {
   late_payments: number;
   split?: string | null;
   latest_time_idx?: number | null;
-  customer_segment?: string | null;
+  actual_label?: number | null;
+  actual_label_name?: "Churn" | "Not Churn" | string | null;
   history_months_available?: number | null;
   txn_count_3m?: number | null;
   spend_3m?: number | null;
@@ -40,6 +41,9 @@ export type PredictionResult = {
   churn_probability: number;
   prediction_label: "Churn" | "Not Churn";
   confidence: number;
+  actual_label?: number | null;
+  actual_label_name?: "Churn" | "Not Churn" | string | null;
+  is_correct?: boolean | null;
   source?: "live_model" | "cached_fallback" | "mock_baseline" | "unavailable" | string | null;
   status?: "ok" | "fallback" | "mock" | "failed" | string | null;
   message?: string | null;
@@ -54,12 +58,8 @@ export type CustomerPage = {
 
 export type CustomerFilterKey =
   | "all"
-  | "high_churn_risk"
-  | "growing_activity"
-  | "stable_monitored"
-  | "month_to_month"
-  | "one_year"
-  | "two_year"
+  | "churn"
+  | "not_churn"
   | "train"
   | "validation"
   | "test"
@@ -69,7 +69,7 @@ export type CustomerSortKey =
   | "customer_id"
   | "history"
   | "tenure"
-  | "segment"
+  | "actual_label"
   | "activity"
   | "spend"
   | "days_since_last_txn"
@@ -88,6 +88,8 @@ export type CustomerPageParams = {
 
 export type PredictionResponse = {
   customer_id: string;
+  actual_label?: number | null;
+  actual_label_name?: "Churn" | "Not Churn" | string | null;
   predictions: PredictionResult[];
   highest_probability_model: string;
   recommendation: string;

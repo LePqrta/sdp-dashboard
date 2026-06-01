@@ -13,12 +13,8 @@ DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 
 CustomerFilterKey = Literal[
     "all",
-    "high_churn_risk",
-    "growing_activity",
-    "stable_monitored",
-    "month_to_month",
-    "one_year",
-    "two_year",
+    "churn",
+    "not_churn",
     "train",
     "validation",
     "test",
@@ -30,8 +26,7 @@ CustomerSortKey = Literal[
     "history_months_available",
     "tenure",
     "tenure_months",
-    "segment",
-    "customer_segment",
+    "actual_label",
     "activity",
     "txn_count_3m",
     "spend",
@@ -45,12 +40,8 @@ DEFAULT_CUSTOMER_SORT: CustomerSortKey = "customer_id"
 DEFAULT_CUSTOMER_DIRECTION: CustomerSortDirection = "asc"
 
 _CUSTOMER_FILTER_ALIASES: dict[str, tuple[str, ...]] = {
-    "high_churn_risk": ("high churn risk",),
-    "growing_activity": ("growing activity",),
-    "stable_monitored": ("stable monitored",),
-    "month_to_month": ("month-to-month", "month to month"),
-    "one_year": ("one year",),
-    "two_year": ("two year",),
+    "churn": ("1", "churn"),
+    "not_churn": ("0", "not churn"),
 }
 
 
@@ -251,8 +242,8 @@ def _sort_customers(
 def _customer_search_text(customer: Customer) -> str:
     values = (
         customer.customer_id,
-        customer.customer_segment,
-        customer.contract_type,
+        customer.actual_label,
+        customer.actual_label_name,
         customer.split,
         customer.internet_service,
         customer.payment_method,
@@ -266,8 +257,8 @@ def _customer_search_text(customer: Customer) -> str:
 
 def _customer_matches_filter(customer: Customer, aliases: tuple[str, ...]) -> bool:
     candidate_values = (
-        customer.customer_segment,
-        customer.contract_type,
+        customer.actual_label,
+        customer.actual_label_name,
         customer.split,
         customer.internet_service,
         customer.payment_method,
@@ -285,8 +276,8 @@ def _customer_sort_value(customer: Customer, sort: CustomerSortKey) -> Any:
         return customer.history_months_available if customer.history_months_available is not None else customer.age
     if sort in {"tenure", "tenure_months"}:
         return customer.tenure_months
-    if sort in {"segment", "customer_segment"}:
-        return customer.customer_segment or customer.contract_type
+    if sort == "actual_label":
+        return customer.actual_label
     if sort in {"activity", "txn_count_3m"}:
         return customer.txn_count_3m if customer.txn_count_3m is not None else customer.support_tickets
     if sort in {"spend", "spend_3m"}:

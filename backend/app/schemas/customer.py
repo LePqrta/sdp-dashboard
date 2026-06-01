@@ -14,7 +14,8 @@ class Customer(BaseModel):
     late_payments: int
     split: str | None = None
     latest_time_idx: int | None = None
-    customer_segment: str | None = None
+    actual_label: int | None = None
+    actual_label_name: str | None = None
     history_months_available: int | None = None
     txn_count_3m: float | None = None
     spend_3m: float | None = None

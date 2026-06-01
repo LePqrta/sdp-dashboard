@@ -11,10 +11,13 @@ def predict_for_customer(customer_id: str) -> PredictionResponse:
         _safe_model_result("TabNet", lambda: predict_tabnet(customer.customer_id)),
         _safe_model_result("TFT", lambda: predict_tft(customer.customer_id)),
     ]
+    results = [_with_actual_label(result, customer.actual_label, customer.actual_label_name) for result in results]
     best_model = select_best_for_customer(results)
 
     return PredictionResponse(
         customer_id=customer.customer_id,
+        actual_label=customer.actual_label,
+        actual_label_name=customer.actual_label_name,
         predictions=results,
         highest_probability_model=best_model.model_name,
         recommendation=_build_recommendation(best_model),
@@ -30,6 +33,21 @@ def _build_recommendation(best_model: PredictionResult) -> str:
     return (
         f"{best_model.model_name} has the highest validated churn probability, but the customer is still "
         "classified as Not Churn. Monitor normally."
+    )
+
+
+def _with_actual_label(
+    result: PredictionResult,
+    actual_label: int | None,
+    actual_label_name: str | None,
+) -> PredictionResult:
+    predicted_label = 1 if result.prediction_label == "Churn" else 0
+    return result.model_copy(
+        update={
+            "actual_label": actual_label,
+            "actual_label_name": actual_label_name,
+            "is_correct": None if actual_label is None else predicted_label == actual_label,
+        }
     )
 
 

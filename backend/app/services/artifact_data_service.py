@@ -39,12 +39,12 @@ TFT_CALIBRATOR_PATH = ARTIFACTS_DIR / "models" / "tft" / "calibration" / "isoton
 DEMO_CUSTOMER_LIMIT = 5000
 
 _CUSTOMER_FILTER_ALIASES: dict[str, tuple[str, ...]] = {
-    "high_churn_risk": ("high churn risk",),
-    "growing_activity": ("growing activity",),
-    "stable_monitored": ("stable monitored",),
-    "month_to_month": ("month-to-month", "month to month"),
-    "one_year": ("one year",),
-    "two_year": ("two year",),
+    "churn": ("1", "churn"),
+    "not_churn": ("0", "not churn"),
+    "test": ("test",),
+    "train": ("train",),
+    "validation": ("validation", "val"),
+    "sample": ("sample",),
 }
 
 
@@ -184,9 +184,9 @@ def _sort_customer_rows(rows: Any, sort: str, direction: str) -> Any:
 def _customer_row_search_text(row: Any) -> str:
     values = (
         row.get("cust_id"),
-        _segment_for_row(row),
+        _label_name(row.get("l3_label")),
+        row.get("l3_label"),
         row.get("split"),
-        row.get("l3_component_category"),
         row.get("history_months_available"),
         row.get("tenure_months"),
         row.get("txn_count_3m"),
@@ -197,9 +197,9 @@ def _customer_row_search_text(row: Any) -> str:
 
 def _customer_row_matches_filter(row: Any, aliases: tuple[str, ...]) -> bool:
     candidate_values = (
-        _segment_for_row(row),
+        _label_name(row.get("l3_label")),
+        row.get("l3_label"),
         row.get("split"),
-        row.get("l3_component_category"),
     )
     normalized_candidates = {
         str(value).strip().casefold()
@@ -217,8 +217,8 @@ def _customer_row_sort_value(row: Any, sort: str) -> Any:
         return _numeric_row_value(row, "history_months_available", fallback_column="tenure_months")
     if sort_key in {"tenure", "tenure_months"}:
         return _numeric_row_value(row, "tenure_months")
-    if sort_key in {"segment", "customer_segment"}:
-        return _segment_for_row(row)
+    if sort_key in {"actual_label", "label"}:
+        return _numeric_row_value(row, "l3_label")
     if sort_key in {"activity", "txn_count_3m"}:
         return _numeric_row_value(row, "txn_count_3m")
     if sort_key in {"spend", "spend_3m"}:
@@ -286,19 +286,19 @@ def customer_panel_rows(customer_id: str) -> Any:
 
 
 def _row_to_customer(row: Any) -> Customer:
-    segment = _segment_for_row(row)
     history_months = _to_int(row.get("history_months_available"), _to_int(row.get("tenure_months")))
     spend_3m = _to_float(row.get("spend_3m"))
     total_spend = _to_float(row.get("total_lifetime_spend"))
     txn_count_3m = _to_float(row.get("txn_count_3m"))
     days_since_last_txn = _to_float(row.get("days_since_last_txn"))
+    actual_label = _to_optional_int(row.get("l3_label"))
 
     return Customer(
         customer_id=str(row.get("cust_id")),
         # Compatibility fields for the original UI. The richer fields below are preferred by new views.
         age=history_months,
         tenure_months=_to_int(row.get("tenure_months")),
-        contract_type=segment,
+        contract_type=str(row.get("split", "sample")),
         monthly_charges=spend_3m,
         total_charges=total_spend,
         internet_service=str(row.get("split", "sample")),
@@ -307,7 +307,8 @@ def _row_to_customer(row: Any) -> Customer:
         late_payments=_to_int(days_since_last_txn),
         split=str(row.get("split", "")),
         latest_time_idx=_to_int(row.get("time_idx")),
-        customer_segment=segment,
+        actual_label=actual_label,
+        actual_label_name=_label_name(actual_label),
         history_months_available=history_months,
         txn_count_3m=txn_count_3m,
         spend_3m=spend_3m,
@@ -318,17 +319,17 @@ def _row_to_customer(row: Any) -> Customer:
     )
 
 
-def _segment_for_row(row: Any) -> str:
-    days_since_last_txn = _to_float(row.get("days_since_last_txn"))
-    spend_ratio = _to_float(row.get("spend_ratio"), 1.0)
-    txn_ratio = _to_float(row.get("txn_ratio"), 1.0)
-    component = str(row.get("l3_component_category", "")).lower()
+def _to_optional_int(value: Any) -> int | None:
+    if _is_missing_sort_value(value):
+        return None
+    return _to_int(value)
 
-    if component in {"hard", "soft"} or days_since_last_txn >= 90 or spend_ratio < 0.5:
-        return "High churn risk"
-    if spend_ratio >= 1.1 or txn_ratio >= 1.1:
-        return "Growing activity"
-    return "Stable monitored"
+
+def _label_name(value: Any) -> str | None:
+    label = _to_optional_int(value)
+    if label is None:
+        return None
+    return "Churn" if label == 1 else "Not Churn"
 
 
 def sample_customer_ids(limit: int = 3) -> list[str]:

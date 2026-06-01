@@ -22,6 +22,8 @@ export function PredictionTable({
               <th className="py-3 pr-4 font-semibold">Model</th>
               <th className="py-3 pr-4 font-semibold">Churn Probability</th>
               <th className="py-3 pr-4 font-semibold">Prediction</th>
+              <th className="py-3 pr-4 font-semibold">Actual</th>
+              <th className="py-3 pr-4 font-semibold">Result</th>
               <th className="py-3 pr-4 font-semibold">Confidence</th>
               <th className="py-3 pr-4 font-semibold">Source</th>
             </tr>
@@ -52,6 +54,31 @@ export function PredictionTable({
                       }
                     >
                       {item.prediction_label}
+                    </span>
+                  </td>
+                  <td className="py-3 pr-4">
+                    <span
+                      className={
+                        item.actual_label === 1
+                          ? "font-semibold text-warning"
+                          : "font-semibold text-success"
+                      }
+                    >
+                      {item.actual_label_name ?? "Unknown"}
+                    </span>
+                  </td>
+                  <td className="py-3 pr-4">
+                    <span
+                      className={[
+                        "rounded-full px-2 py-1 text-xs font-semibold",
+                        item.is_correct == null
+                          ? "bg-slate-100 text-muted"
+                          : item.is_correct
+                            ? "bg-emerald-50 text-success"
+                            : "bg-rose-50 text-rose-700",
+                      ].join(" ")}
+                    >
+                      {item.is_correct == null ? "Unknown" : item.is_correct ? "Correct" : "Wrong"}
                     </span>
                   </td>
                   <td className="py-3 pr-4">{(item.confidence * 100).toFixed(1)}%</td>
