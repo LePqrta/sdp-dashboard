@@ -311,11 +311,17 @@ def load_mock_explanations() -> dict[str, dict[str, Any]]:
 
 def random_customer() -> Customer:
     try:
-        from app.services.explainability_service import random_explainability_ready_customer_id
+        from app.services.artifact_data_service import load_demo_customer_rows
+        from app.services.explainability_service import explanation_ready_customer_ids
 
-        eligible_customer_id = random_explainability_ready_customer_id()
-        if eligible_customer_id:
-            return find_customer(eligible_customer_id)
+        sample_ids = set(load_demo_customer_rows()["cust_id"].astype(str))
+        eligible_ids = [
+            customer_id
+            for customer_id in explanation_ready_customer_ids(require_both_models=True)
+            if customer_id in sample_ids
+        ]
+        if eligible_ids:
+            return find_customer(random.choice(eligible_ids))
     except Exception:
         pass
 

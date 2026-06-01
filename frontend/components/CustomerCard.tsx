@@ -9,9 +9,9 @@ export function CustomerCard({ customer }: { customer: Customer }) {
     ["Sample Split", customer.split ?? customer.internet_service],
     ["Latest Time Index", customer.latest_time_idx ?? "N/A"],
     ["3M Transactions", formatNumber(customer.txn_count_3m ?? customer.support_tickets)],
-    ["3M Spend", formatMoney(customer.spend_3m ?? customer.monthly_charges)],
-    ["Avg Transaction", formatMoney(customer.avg_txn_amt_3m ?? customer.monthly_charges)],
-    ["Lifetime Spend", formatMoney(customer.total_lifetime_spend ?? customer.total_charges)],
+    ["3M Spend", formatAmount(customer.spend_3m ?? customer.monthly_charges)],
+    ["Avg Transaction", formatAmount(customer.avg_txn_amt_3m ?? customer.monthly_charges)],
+    ["Lifetime Spend", formatAmount(customer.total_lifetime_spend ?? customer.total_charges)],
     ["Lifetime Transactions", formatNumber(customer.total_transaction_count ?? customer.support_tickets)],
     ["Days Since Last Txn", formatNumber(customer.days_since_last_txn ?? customer.late_payments)],
   ];
@@ -47,8 +47,8 @@ export function CustomerCard({ customer }: { customer: Customer }) {
   );
 }
 
-function formatMoney(value: number) {
-  return `$${value.toFixed(2)}`;
+function formatAmount(value: number) {
+  return value.toFixed(2);
 }
 
 function formatNumber(value: number) {

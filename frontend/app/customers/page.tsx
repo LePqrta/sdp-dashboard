@@ -18,11 +18,7 @@ const PAGE_SIZE = 25;
 const FILTER_OPTIONS: Array<{ value: CustomerFilterKey; label: string }> = [
   { value: "all", label: "All customers" },
   { value: "churn", label: "Actual: Churn" },
-  { value: "not_churn", label: "Actual: Not Churn" },
-  { value: "train", label: "Train split" },
-  { value: "validation", label: "Validation split" },
-  { value: "test", label: "Test split" },
-  { value: "sample", label: "Sample split" },
+  { value: "not_churn", label: "Actual: Not Churn" }
 ];
 
 const CUSTOMER_TABLE_COLUMNS: Array<{ label: string; sort?: CustomerSortKey }> = [
@@ -254,46 +250,32 @@ function CustomersPageContent() {
         </div>
       ) : null}
 
-      <section className="grid items-stretch gap-6 lg:grid-cols-[1fr_0.9fr]">
-        <div className="fade-in h-full">
-          <div className="research-card h-full rounded-2xl p-6">
-            <h2 className="text-2xl font-semibold text-ink">Representative sample workflow</h2>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              Select a random customer, inspect their profile, then continue into the model prediction
-              comparison.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                onClick={selectRandomCustomer}
-                disabled={loadingCustomer}
-                className="rounded-md bg-accent px-5 py-3 text-sm font-semibold text-white hover:bg-[#256864] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {loadingCustomer ? "Selecting..." : "Select Random Customer"}
-              </button>
-              <button
-                onClick={runPrediction}
-                disabled={!selectedCustomer}
-                className="rounded-md border border-line bg-panel px-5 py-3 text-sm font-semibold text-ink hover:border-mint hover:bg-mint/10 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Run Prediction
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="fade-in h-full">
-          <div className="h-full overflow-hidden rounded-2xl border border-mint/50 bg-gradient-to-br from-[#e9fbf7] via-panel to-[#fff6e7] shadow-soft">
-            <div className="lab-strip h-2" />
-            <div className="p-6">
-              <p className="text-sm font-semibold uppercase tracking-wide text-accent">
-                Dataset boundary
-              </p>
-              <p className="mt-3 text-3xl font-semibold text-ink">1000-5000</p>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                Intended demo sample size. This keeps the dashboard responsive while preserving a realistic
-                customer-level story.
+      <section className="fade-in">
+        <div className="research-card rounded-2xl p-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-3xl">
+              <h2 className="text-2xl font-semibold text-ink">Representative sample workflow</h2>
+              <p className="mt-3 text-sm leading-6 text-muted">
+                Select a random customer, inspect their profile, then continue into the model prediction
+                comparison.
               </p>
             </div>
+            <div className="flex flex-wrap gap-3 lg:justify-end">
+                <button
+                  onClick={selectRandomCustomer}
+                  disabled={loadingCustomer}
+                  className="rounded-md bg-accent px-5 py-3 text-sm font-semibold text-white hover:bg-[#256864] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loadingCustomer ? "Selecting..." : "Select Random Customer"}
+                </button>
+                <button
+                  onClick={runPrediction}
+                  disabled={!selectedCustomer}
+                  className="rounded-md border border-line bg-panel px-5 py-3 text-sm font-semibold text-ink hover:border-mint hover:bg-mint/10 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Run Prediction
+                </button>
+              </div>
           </div>
         </div>
       </section>
@@ -510,7 +492,7 @@ function CustomersPageContent() {
                     </td>
                     <td className="py-3 pr-4">{customer.tenure_months} months</td>
                     <td className="py-3 pr-4">
-                      {(customer.txn_count_3m ?? customer.support_tickets).toFixed(0)} txns / $
+                      {(customer.txn_count_3m ?? customer.support_tickets).toFixed(0)} txns /{" "}
                       {(customer.spend_3m ?? customer.monthly_charges).toFixed(2)}
                     </td>
                   </tr>

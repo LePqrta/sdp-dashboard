@@ -6,7 +6,6 @@ import { CustomerCard } from "@/components/CustomerCard";
 import { LoadingState } from "@/components/LoadingState";
 import { ModelExplanationCard } from "@/components/ModelExplanationCard";
 import { PageHeader } from "@/components/PageHeader";
-import { RecommendationCard } from "@/components/RecommendationCard";
 import { api, Customer, ExplanationResponse } from "@/lib/api";
 
 type ExplainabilityPageProps = {
@@ -51,12 +50,6 @@ export default function ExplainabilityPage({ params }: ExplainabilityPageProps) 
       {explanation ? (
         <div className="space-y-6">
           {customer ? <CustomerCard customer={customer} /> : null}
-
-          <RecommendationCard
-            title="Top model factors"
-            body="These factors are compact precomputed local importances from the selected model artifacts."
-            tone="blue"
-          />
 
           {explanation.warnings.length ? (
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-800">
